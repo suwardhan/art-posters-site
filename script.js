@@ -1,8 +1,7 @@
 // ── Theme toggle ──
 (function () {
   const stored = localStorage.getItem("theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const theme = stored || (prefersDark ? "dark" : "light");
+  const theme = stored || "light";
   document.documentElement.setAttribute("data-theme", theme);
 })();
 
