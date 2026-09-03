@@ -125,7 +125,7 @@ function sendCustomerEmail_(order) {
     to: order.email,
     replyTo: REPLY_TO,
     name: FROM_NAME,
-    subject: "Order " + order.code + " received — " + FROM_NAME,
+    subject: "Order " + order.code + " received - " + FROM_NAME,
     body:
       "Hi " +
       order.name +
@@ -156,7 +156,7 @@ function sendCustomerEmail_(order) {
       order.country +
       "\n\n" +
       "We’ll email payment details shortly. Reply to this message if anything looks wrong.\n\n" +
-      "— " +
+      "- " +
       FROM_NAME,
   });
 }
@@ -166,7 +166,7 @@ function sendShopAlert_(order) {
     to: SHOP_EMAILS,
     replyTo: order.email || REPLY_TO,
     name: FROM_NAME,
-    subject: "New poster order " + order.code + " — " + order.poster,
+    subject: "New poster order " + order.code + " - " + order.poster,
     body:
       "New order " +
       order.code +

@@ -4,9 +4,69 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Abhishek.Design</title>
-  <meta http-equiv="refresh" content="0;url=posters/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <p>Redirecting to <a href="posters/">posters</a>…</p>
+  <nav class="navbar">
+    <a href="./" class="logo">Abhishek.Design</a>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <section class="home-hero">
+    <div class="home-hero-copy">
+      <p class="home-kicker">Studio</p>
+      <h1>Art is a way of paying attention.</h1>
+      <p>Colour, form, and silence - made to live with you, not just to be looked at.</p>
+    </div>
+    <div class="home-hero-photo" aria-hidden="true">
+      <span>Image coming soon</span>
+    </div>
+  </section>
+
+  <main class="home-main">
+    <section class="masonry home-cards" aria-label="Collections">
+      <a class="card home-tile" href="posters/">
+        <div class="home-tile-slides">
+          <img class="home-tile-slide is-active" src="images/dangal.jpg" alt="Posters" />
+          <img class="home-tile-slide" alt="" />
+        </div>
+        <div class="card-overlay home-tile-overlay">
+          <div class="card-info">
+            <span class="card-title">Posters</span>
+          </div>
+        </div>
+      </a>
+      <div class="card home-tile home-tile-soon">
+        <div class="home-tile-placeholder"></div>
+        <div class="card-overlay home-tile-overlay">
+          <div class="card-info">
+            <span class="card-title">Coming soon</span>
+          </div>
+        </div>
+      </div>
+      <div class="card home-tile home-tile-soon">
+        <div class="home-tile-placeholder"></div>
+        <div class="card-overlay home-tile-overlay">
+          <div class="card-info">
+            <span class="card-title">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Abhishek.Design</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

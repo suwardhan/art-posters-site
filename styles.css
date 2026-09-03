@@ -45,6 +45,9 @@ body {
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Navbar ── */
@@ -494,6 +497,111 @@ main {
   margin-bottom: 0.5rem;
 }
 
+/* ── Home ── */
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr minmax(240px, 42%);
+  gap: 3rem;
+  align-items: center;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 10rem 1rem 8rem;
+}
+
+.home-hero-copy h1 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.home-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.home-hero-copy > p:last-child {
+  margin-top: 0.875rem;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 28rem;
+}
+
+.home-hero-photo {
+  min-height: 320px;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+  border: 1px dashed var(--input-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-hero-photo span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.home-main {
+  flex: 1;
+  padding: 0 1rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.home-tile {
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+}
+
+.home-tile-soon {
+  cursor: default;
+}
+
+.home-tile-placeholder,
+.home-tile-slides {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+}
+
+.home-tile-slides .home-tile-slide {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+  opacity: 0;
+  transition: opacity 0.9s ease, filter 0.2s;
+}
+
+.home-tile-slides .home-tile-slide.is-active {
+  opacity: 1;
+}
+
+.home-tile-overlay {
+  opacity: 1;
+  z-index: 1;
+}
+
+.home-tile:hover .home-tile-slide {
+  filter: brightness(0.92);
+}
+
 /* ── Footer ── */
 footer {
   text-align: center;
@@ -511,6 +619,16 @@ footer {
 }
 
 @media (max-width: 720px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    padding: 6rem 1rem 5rem;
+    gap: 1.75rem;
+  }
+
+  .home-hero-photo {
+    min-height: 220px;
+  }
+
   .order-layout {
     grid-template-columns: 1fr;
     padding: 1.25rem;

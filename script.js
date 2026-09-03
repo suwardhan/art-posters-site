@@ -65,15 +65,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   initOrderDialog();
+  initHomePosterSlideshow();
 });
 
 // ── Load posters ──
+const masonry = document.getElementById("masonry");
+if (masonry) {
 fetch("../posters.json")
   .then((res) => res.json())
   .then((posters) => {
-    const masonry = document.getElementById("masonry");
-    if (!masonry) return;
-
     posters.forEach((p) => {
       const card = document.createElement("div");
       card.className = "card";
@@ -102,6 +102,7 @@ fetch("../posters.json")
       masonry.appendChild(card);
     });
   });
+}
 
 function escapeHtml(str) {
   return String(str)
@@ -113,6 +114,45 @@ function escapeHtml(str) {
 
 function escapeAttr(str) {
   return escapeHtml(str).replace(/'/g, "&#39;");
+}
+
+function initHomePosterSlideshow() {
+  const slides = document.querySelectorAll(".home-tile-slide");
+  if (slides.length < 2) return;
+
+  fetch("posters.json")
+    .then((res) => res.json())
+    .then((posters) => {
+      const urls = posters.map((p) =>
+        p.image.startsWith("images/") ? p.image : p.image
+      );
+      if (!urls.length) return;
+
+      slides[0].src = urls[0];
+      let index = 0;
+      let showing = 0;
+
+      const preload = (url) =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+        });
+
+      const advance = async () => {
+        index = (index + 1) % urls.length;
+        const next = 1 - showing;
+        await preload(urls[index]);
+        slides[next].src = urls[index];
+        slides[next].classList.add("is-active");
+        slides[showing].classList.remove("is-active");
+        showing = next;
+      };
+
+      setInterval(advance, 5000);
+    })
+    .catch(() => {});
 }
 
 function initOrderDialog() {
