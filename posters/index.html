@@ -35,6 +35,96 @@
     <p>&copy; 2026 Abhishek.Design</p>
   </footer>
 
+  <dialog id="orderDialog" class="order-dialog" aria-labelledby="orderDialogTitle">
+    <button type="button" class="order-close" id="orderClose" aria-label="Close">&times;</button>
+
+    <div class="order-form-view" id="orderFormView">
+      <div class="order-layout">
+        <aside class="order-preview">
+          <img id="orderPosterImg" src="" alt="" />
+          <h2 id="orderDialogTitle" class="order-poster-title"></h2>
+          <p class="order-unit-price">€35 per print</p>
+        </aside>
+
+        <form id="orderForm" class="order-form" novalidate>
+          <input type="hidden" id="orderPosterTitle" name="poster" />
+
+          <fieldset class="order-fieldset">
+            <legend>Print</legend>
+            <div class="order-row">
+              <label for="orderSize">Size</label>
+              <select id="orderSize" name="size" required>
+                <option value="A4">A4 (21 × 29.7 cm)</option>
+                <option value="A3" selected>A3 (29.7 × 42 cm)</option>
+              </select>
+            </div>
+            <div class="order-row">
+              <label for="orderQty">Quantity</label>
+              <input type="number" id="orderQty" name="quantity" min="1" max="20" value="1" required />
+            </div>
+          </fieldset>
+
+          <fieldset class="order-fieldset">
+            <legend>Contact</legend>
+            <div class="order-row">
+              <label for="orderName">Full name</label>
+              <input type="text" id="orderName" name="name" autocomplete="name" required />
+            </div>
+            <div class="order-row">
+              <label for="orderEmail">Email</label>
+              <input type="email" id="orderEmail" name="email" autocomplete="email" required />
+            </div>
+            <div class="order-row">
+              <label for="orderPhone">Phone</label>
+              <input type="tel" id="orderPhone" name="phone" autocomplete="tel" required />
+            </div>
+          </fieldset>
+
+          <fieldset class="order-fieldset">
+            <legend>Delivery</legend>
+            <div class="order-row">
+              <label for="orderStreet">Street address</label>
+              <input type="text" id="orderStreet" name="street" autocomplete="street-address" required />
+            </div>
+            <div class="order-row order-row-split">
+              <div>
+                <label for="orderCity">City</label>
+                <input type="text" id="orderCity" name="city" autocomplete="address-level2" required />
+              </div>
+              <div>
+                <label for="orderPostal">Postal code</label>
+                <input type="text" id="orderPostal" name="postal" autocomplete="postal-code" required />
+              </div>
+            </div>
+            <div class="order-row">
+              <label for="orderCountry">Country</label>
+              <input type="text" id="orderCountry" name="country" autocomplete="country-name" required />
+            </div>
+          </fieldset>
+
+          <div class="order-total-bar">
+            <span>Total</span>
+            <strong id="orderTotal">€35</strong>
+          </div>
+
+          <p class="order-error" id="orderError" hidden></p>
+
+          <button type="submit" class="order-submit" id="orderSubmit">Place order</button>
+          <p class="order-note">No payment yet — we’ll email you payment details after confirming your order.</p>
+        </form>
+      </div>
+    </div>
+
+    <div class="order-confirm-view" id="orderConfirmView" hidden>
+      <div class="order-confirm">
+        <p class="order-confirm-label">Order received</p>
+        <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
+        <p class="order-confirm-copy">Save this code. We’ll email payment and shipping details shortly.</p>
+        <button type="button" class="order-submit" id="orderDone">Done</button>
+      </div>
+    </div>
+  </dialog>
+
   <script src="../script.js"></script>
 </body>
 </html>
