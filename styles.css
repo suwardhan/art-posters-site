@@ -262,15 +262,38 @@ main {
 .order-layout {
   display: grid;
   grid-template-columns: minmax(200px, 280px) 1fr;
+  grid-template-areas:
+    "preview form"
+    "faq form";
   gap: 1.75rem;
   padding: 1.75rem;
   clear: both;
+  align-items: start;
 }
 
 .order-preview {
+  grid-area: preview;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.order-form {
+  grid-area: form;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.order-faq {
+  grid-area: faq;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
 }
 
 .order-preview img {
@@ -290,13 +313,6 @@ main {
 .order-unit-price {
   font-size: 0.9rem;
   color: var(--text-muted);
-}
-
-.order-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  min-width: 0;
 }
 
 .order-fieldset {
@@ -456,15 +472,6 @@ main {
   color: var(--text-muted);
   line-height: 1.4;
   text-align: center;
-}
-
-.order-faq {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid var(--border);
 }
 
 .order-faq-heading {
@@ -763,6 +770,10 @@ footer {
 
   .order-layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "preview"
+      "form"
+      "faq";
     padding: 1.25rem;
     gap: 1.25rem;
   }
@@ -776,6 +787,10 @@ footer {
   .order-preview img {
     width: 96px;
     flex-shrink: 0;
+  }
+
+  .order-faq {
+    padding-top: 0.5rem;
   }
 
   .order-row-split {
