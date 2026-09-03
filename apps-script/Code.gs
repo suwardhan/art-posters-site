@@ -11,7 +11,7 @@
  */
 
 var SHEET_NAME = "Orders";
-var SHOP_EMAIL = "chaudharykidiary@gmail.com";
+var SHOP_EMAILS = "chaudharykidiary@gmail.com, suwardhan@gmail.com";
 var REPLY_TO = "chaudharykidiary@gmail.com";
 var FROM_NAME = "Abhishek.Design";
 
@@ -163,7 +163,7 @@ function sendCustomerEmail_(order) {
 
 function sendShopAlert_(order) {
   MailApp.sendEmail({
-    to: SHOP_EMAIL,
+    to: SHOP_EMAILS,
     replyTo: order.email || REPLY_TO,
     name: FROM_NAME,
     subject: "New poster order " + order.code + " — " + order.poster,
