@@ -275,6 +275,7 @@ function initOrderDialog() {
       }
 
       confirmCode.textContent = data.confirmationCode;
+      document.getElementById("orderConfirmTotal").textContent = `€${payload.total}`;
       formView.hidden = true;
       confirmView.hidden = false;
     } catch (err) {

@@ -155,7 +155,15 @@ function sendCustomerEmail_(order) {
       "\n" +
       order.country +
       "\n\n" +
-      "We’ll email payment details shortly. Reply to this message if anything looks wrong.\n\n" +
+      "Please pay €" +
+      order.total +
+      " via PayPal to @chaudharikidiary\n" +
+      "https://www.paypal.me/chaudharikidiary\n" +
+      "Include confirmation code " +
+      order.code +
+      " in the payment note.\n\n" +
+      "Once the amount is received, we'll ship in 3-5 business days.\n\n" +
+      "Reply to this message if anything looks wrong.\n\n" +
       "- " +
       FROM_NAME,
   });
@@ -202,9 +210,12 @@ function sendShopAlert_(order) {
       " " +
       order.city +
       "\n" +
-      order.country,
-  });
-}
+      order.country +
+      "\n\n" +
+      "Awaiting PayPal €" +
+      order.total +
+      " to @chaudharikidiary.\n" +
+      "Ship 3-5 business days after payment is received.";
 
 function getOrdersSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();

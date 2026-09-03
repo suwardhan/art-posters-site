@@ -469,7 +469,7 @@ main {
 }
 
 .order-confirm {
-  max-width: 360px;
+  max-width: 400px;
   margin: 0 auto;
   text-align: center;
   display: flex;
@@ -496,7 +496,24 @@ main {
   font-size: 0.95rem;
   color: var(--text-muted);
   line-height: 1.45;
-  margin-bottom: 0.5rem;
+}
+
+.order-confirm-copy strong {
+  color: var(--text);
+}
+
+.order-paypal {
+  display: inline-block;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.order-paypal:hover {
+  filter: brightness(0.97);
 }
 
 /* ── Home ── */

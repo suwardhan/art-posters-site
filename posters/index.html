@@ -122,7 +122,7 @@
           <p class="order-error" id="orderError" hidden></p>
 
           <button type="submit" class="order-submit" id="orderSubmit">Place order</button>
-          <p class="order-note">A confirmation email will be sent to you. We’ll follow up with payment details.</p>
+          <p class="order-note">You'll get a confirmation email. Pay via PayPal to complete the order.</p>
         </form>
       </div>
     </div>
@@ -131,7 +131,22 @@
       <div class="order-confirm">
         <p class="order-confirm-label">Order received</p>
         <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
-        <p class="order-confirm-copy">Check your inbox for a confirmation. We’ll email payment and shipping details shortly.</p>
+        <p class="order-confirm-copy">
+          Please pay <strong id="orderConfirmTotal">€0</strong> on PayPal.
+          Include your confirmation code in the payment note.
+        </p>
+        <a
+          class="order-paypal"
+          href="https://www.paypal.me/chaudharikidiary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          PayPal @chaudharikidiary
+        </a>
+        <p class="order-confirm-copy">
+          Once the amount is received, we'll ship in 3-5 business days.
+          A confirmation email is on its way.
+        </p>
         <button type="button" class="order-submit" id="orderDone">Done</button>
       </div>
     </div>
