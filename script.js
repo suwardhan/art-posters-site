@@ -120,7 +120,8 @@ function initOrderDialog() {
   if (!dialog) return;
 
   const form = document.getElementById("orderForm");
-  const sizeSelect = document.getElementById("orderSize");
+  const sizeInput = document.getElementById("orderSize");
+  const chipsEl = document.getElementById("orderSizeChips");
   const qtyInput = document.getElementById("orderQty");
   const totalEl = document.getElementById("orderTotal");
   const unitPriceEl = document.getElementById("orderUnitPrice");
@@ -130,23 +131,40 @@ function initOrderDialog() {
   const confirmView = document.getElementById("orderConfirmView");
   const confirmCode = document.getElementById("orderConfirmCode");
 
-  POSTER_SIZES.forEach((s) => {
-    const opt = document.createElement("option");
-    opt.value = s.id;
-    opt.textContent = `${s.label} — €${s.price}`;
-    if (s.id === DEFAULT_SIZE) opt.selected = true;
-    sizeSelect.appendChild(opt);
-  });
-
   const updateTotal = () => {
     const qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
-    const unit = priceForSize(sizeSelect.value);
+    const unit = priceForSize(sizeInput.value);
     unitPriceEl.textContent = `€${unit} per print`;
     totalEl.textContent = `€${qty * unit}`;
   };
 
+  const selectSize = (sizeId) => {
+    sizeInput.value = sizeId;
+    chipsEl.querySelectorAll(".size-chip").forEach((chip) => {
+      const on = chip.dataset.size === sizeId;
+      chip.classList.toggle("is-selected", on);
+      chip.setAttribute("aria-checked", on ? "true" : "false");
+    });
+    updateTotal();
+  };
+
+  POSTER_SIZES.forEach((s) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "size-chip";
+    chip.dataset.size = s.id;
+    chip.setAttribute("role", "radio");
+    chip.setAttribute("aria-checked", "false");
+    chip.innerHTML = `
+      <span class="size-chip-size">${escapeHtml(s.label)}</span>
+      <span class="size-chip-price">€${s.price}</span>
+    `;
+    chip.addEventListener("click", () => selectSize(s.id));
+    chipsEl.appendChild(chip);
+  });
+
+  selectSize(DEFAULT_SIZE);
   qtyInput.addEventListener("input", updateTotal);
-  sizeSelect.addEventListener("change", updateTotal);
 
   document.getElementById("orderClose").addEventListener("click", () => dialog.close());
   document.getElementById("orderDone").addEventListener("click", () => dialog.close());
@@ -158,7 +176,7 @@ function initOrderDialog() {
   dialog.addEventListener("close", () => {
     form.reset();
     qtyInput.value = "1";
-    updateTotal();
+    selectSize(DEFAULT_SIZE);
     errorEl.hidden = true;
     errorEl.textContent = "";
     submitBtn.disabled = false;
@@ -184,7 +202,7 @@ function initOrderDialog() {
     }
 
     const quantity = Math.max(1, parseInt(qtyInput.value, 10) || 1);
-    const size = sizeSelect.value;
+    const size = sizeInput.value;
     const unitPrice = priceForSize(size);
     const payload = {
       poster: document.getElementById("orderPosterTitle").value,
@@ -237,8 +255,13 @@ function openOrderDialog({ title, image }) {
   document.getElementById("orderPosterImg").alt = title;
   document.getElementById("orderDialogTitle").textContent = title;
   document.getElementById("orderPosterTitle").value = title;
-  const sizeSelect = document.getElementById("orderSize");
-  if (sizeSelect) sizeSelect.value = DEFAULT_SIZE;
+  document.querySelectorAll("#orderSizeChips .size-chip").forEach((chip) => {
+    const on = chip.dataset.size === DEFAULT_SIZE;
+    chip.classList.toggle("is-selected", on);
+    chip.setAttribute("aria-checked", on ? "true" : "false");
+  });
+  const sizeInput = document.getElementById("orderSize");
+  if (sizeInput) sizeInput.value = DEFAULT_SIZE;
   const unit = priceForSize(DEFAULT_SIZE);
   document.getElementById("orderUnitPrice").textContent = `€${unit} per print`;
   document.getElementById("orderTotal").textContent = `€${unit}`;

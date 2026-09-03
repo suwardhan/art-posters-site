@@ -331,14 +331,14 @@ main {
   min-width: 0;
 }
 
-.order-form label {
+.order-form label,
+.order-size-heading {
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);
 }
 
-.order-form input,
-.order-form select {
+.order-form input {
   width: 100%;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--input-border);
@@ -349,10 +349,63 @@ main {
   font-size: 0.95rem;
 }
 
-.order-form input:focus,
-.order-form select:focus {
+.order-form input:focus {
   outline: 2px solid var(--text);
   outline-offset: 1px;
+}
+
+.size-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.size-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.2;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.size-chip:hover {
+  border-color: var(--text-muted);
+}
+
+.size-chip:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+
+.size-chip.is-selected {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+.size-chip-size {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.size-chip-price {
+  font-size: 0.7rem;
+  font-weight: 500;
+  opacity: 0.72;
+}
+
+.size-chip.is-selected .size-chip-price {
+  opacity: 0.85;
 }
 
 .order-total-bar {

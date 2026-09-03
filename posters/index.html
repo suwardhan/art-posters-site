@@ -52,8 +52,14 @@
           <fieldset class="order-fieldset">
             <legend>Print</legend>
             <div class="order-row">
-              <label for="orderSize">Size</label>
-              <select id="orderSize" name="size" required></select>
+              <span class="order-size-heading" id="orderSizeLabel">Size</span>
+              <div
+                class="size-chips"
+                id="orderSizeChips"
+                role="radiogroup"
+                aria-labelledby="orderSizeLabel"
+              ></div>
+              <input type="hidden" id="orderSize" name="size" required />
             </div>
             <div class="order-row">
               <label for="orderQty">Quantity</label>
