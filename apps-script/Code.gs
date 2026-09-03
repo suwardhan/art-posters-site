@@ -13,7 +13,7 @@
 var SHEET_NAME = "Orders";
 var SHOP_EMAILS = "chaudharykidiary@gmail.com, suwardhan@gmail.com";
 var REPLY_TO = "chaudharykidiary@gmail.com";
-var FROM_NAME = "Abhishek.Design";
+var FROM_NAME = "ChaudharykiDiary";
 
 /** Keep in sync with POSTER_SIZES in script.js */
 var PRICE_BY_SIZE = {

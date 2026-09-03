@@ -77,6 +77,7 @@ body {
 .nav-actions {
   display: flex;
   align-items: center;
+  gap: 0.4rem;
 }
 
 /* ── Theme toggle ── */
@@ -91,6 +92,7 @@ body {
   background: var(--toggle-bg);
   color: var(--text);
   cursor: pointer;
+  text-decoration: none;
   transition: background 0.2s;
 }
 
@@ -548,6 +550,10 @@ main {
   color: var(--text-muted);
 }
 
+.home-main .home-kicker {
+  margin-bottom: 1rem;
+}
+
 .home-main {
   flex: 1;
   padding: 0 1rem 3rem;
@@ -598,8 +604,45 @@ main {
   z-index: 1;
 }
 
-.home-tile:hover .home-tile-slide {
-  filter: brightness(0.92);
+.home-press {
+  margin-top: 5rem;
+}
+
+.press-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.press-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 180px;
+  padding: 1.25rem;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.press-card:hover {
+  filter: brightness(0.97);
+}
+
+.press-source {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.press-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
 }
 
 /* ── Footer ── */
@@ -616,6 +659,10 @@ footer {
   .masonry {
     columns: 2;
   }
+
+  .press-cards {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -627,6 +674,10 @@ footer {
 
   .home-hero-photo {
     min-height: 220px;
+  }
+
+  .press-cards {
+    grid-template-columns: 1fr;
   }
 
   .order-layout {
