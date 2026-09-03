@@ -43,7 +43,7 @@
         <aside class="order-preview">
           <img id="orderPosterImg" src="" alt="" />
           <h2 id="orderDialogTitle" class="order-poster-title"></h2>
-          <p class="order-unit-price">€35 per print</p>
+          <p class="order-unit-price" id="orderUnitPrice">€40 per print</p>
         </aside>
 
         <form id="orderForm" class="order-form" novalidate>
@@ -53,10 +53,7 @@
             <legend>Print</legend>
             <div class="order-row">
               <label for="orderSize">Size</label>
-              <select id="orderSize" name="size" required>
-                <option value="A4">A4 (21 × 29.7 cm)</option>
-                <option value="A3" selected>A3 (29.7 × 42 cm)</option>
-              </select>
+              <select id="orderSize" name="size" required></select>
             </div>
             <div class="order-row">
               <label for="orderQty">Quantity</label>
@@ -104,13 +101,13 @@
 
           <div class="order-total-bar">
             <span>Total</span>
-            <strong id="orderTotal">€35</strong>
+            <strong id="orderTotal">€40</strong>
           </div>
 
           <p class="order-error" id="orderError" hidden></p>
 
           <button type="submit" class="order-submit" id="orderSubmit">Place order</button>
-          <p class="order-note">No payment yet — we’ll email you payment details after confirming your order.</p>
+          <p class="order-note">A confirmation email will be sent to you. We’ll follow up with payment details.</p>
         </form>
       </div>
     </div>
@@ -119,7 +116,7 @@
       <div class="order-confirm">
         <p class="order-confirm-label">Order received</p>
         <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
-        <p class="order-confirm-copy">Save this code. We’ll email payment and shipping details shortly.</p>
+        <p class="order-confirm-copy">Check your inbox for a confirmation. We’ll email payment and shipping details shortly.</p>
         <button type="button" class="order-submit" id="orderDone">Done</button>
       </div>
     </div>

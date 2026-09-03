@@ -1,54 +1,113 @@
 /**
  * Order intake for art-posters-site → Google Sheet "Orders" tab.
  *
- * SETUP
- * 1. Open your spreadsheet:
- *    https://docs.google.com/spreadsheets/d/16Doxlbfjy8Pz4djk12eq77FTgk4Cc0zZpmzY3RK4Tc0/edit
- * 2. Create a new sheet tab named exactly: Orders
- * 3. Extensions → Apps Script
- * 4. Delete any default code and paste this entire file
- * 5. Deploy → New deployment → Type: Web app
- *      - Execute as: Me
- *      - Who has access: Anyone
- * 6. Authorize, copy the Web app URL
- * 7. Paste that URL into ORDER_ENDPOINT in script.js
+ * After changing this file: Deploy → Manage deployments → Edit → New version.
+ * First mail send will ask for Gmail permission.
  *
- * Sheet columns (row 1 headers are created automatically on first order):
- * Timestamp | Confirmation | Poster | Size | Quantity | Unit Price | Total |
- * Name | Email | Phone | Street | City | Postal | Country | Status
+ * Mail is sent FROM the Google account that owns this script.
+ * To send FROM chaudharykidiary@gmail.com, either:
+ *   - deploy this script while logged in as that account, or
+ *   - add it as a "Send mail as" alias on the owner Gmail, then use GmailApp with {from: ...}.
  */
 
 var SHEET_NAME = "Orders";
-var UNIT_PRICE = 35;
+var SHOP_EMAIL = "chaudharykidiary@gmail.com";
+var REPLY_TO = "chaudharykidiary@gmail.com";
+var FROM_NAME = "Abhishek.Design";
+
+/** Keep in sync with POSTER_SIZES in script.js */
+var PRICE_BY_SIZE = {
+  "5″×7″": 25,
+  "6″×8″": 25,
+  "8″×10″": 25,
+  "8″×12″": 25,
+  "8.27″×11.69″": 25,
+  "9″×11″": 25,
+  "10″×10″": 25,
+  "8″×20″": 40,
+  "10″×24″": 40,
+  "11″×14″": 40,
+  "11″×17″": 40,
+  "11.69″×16.54″": 40,
+  "12″×12″": 40,
+  "12″×16″": 40,
+  "12″×18″": 40,
+  "14″×14″": 40,
+  "16″×16″": 55,
+  "16″×20″": 55,
+  "16″×24″": 55,
+  "18″×18″": 55,
+  "18″×24″": 55,
+  "A2 (16.5″×23.3″)": 55,
+  "20″×20″": 55,
+  "20″×24″": 55,
+  "20″×28″": 75,
+  "20″×30″": 75,
+  "A1 (23.3″×33.1″)": 75,
+  "24″×24″": 75,
+  "24″×32″": 75,
+  "24″×36″": 75,
+  "28″×28″": 75,
+  "28″×40″": 75,
+  "30″×40″": 75,
+};
 
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var sheet = getOrdersSheet_();
-    ensureHeaders_(sheet);
+    var size = String(data.size || "");
+    if (!PRICE_BY_SIZE.hasOwnProperty(size)) {
+      return json_({ ok: false, error: "Unknown size" });
+    }
 
     var quantity = Math.max(1, parseInt(data.quantity, 10) || 1);
-    var unitPrice = Number(data.unitPrice) || UNIT_PRICE;
+    var unitPrice = PRICE_BY_SIZE[size];
     var total = quantity * unitPrice;
+
+    var sheet = getOrdersSheet_();
+    ensureHeaders_(sheet);
     var code = nextConfirmationCode_(sheet);
+
+    var order = {
+      code: code,
+      poster: String(data.poster || ""),
+      size: size,
+      quantity: quantity,
+      unitPrice: unitPrice,
+      total: total,
+      name: String(data.name || ""),
+      email: String(data.email || ""),
+      phone: String(data.phone || ""),
+      street: String(data.street || ""),
+      city: String(data.city || ""),
+      postal: String(data.postal || ""),
+      country: String(data.country || ""),
+    };
 
     sheet.appendRow([
       new Date(),
-      code,
-      String(data.poster || ""),
-      String(data.size || ""),
-      quantity,
-      unitPrice,
-      total,
-      String(data.name || ""),
-      String(data.email || ""),
-      String(data.phone || ""),
-      String(data.street || ""),
-      String(data.city || ""),
-      String(data.postal || ""),
-      String(data.country || ""),
+      order.code,
+      order.poster,
+      order.size,
+      order.quantity,
+      order.unitPrice,
+      order.total,
+      order.name,
+      order.email,
+      order.phone,
+      order.street,
+      order.city,
+      order.postal,
+      order.country,
       "New",
     ]);
+
+    try {
+      sendCustomerEmail_(order);
+      sendShopAlert_(order);
+    } catch (mailErr) {
+      console.error("Mail failed: " + mailErr);
+    }
 
     return json_({ ok: true, confirmationCode: code });
   } catch (err) {
@@ -58,6 +117,93 @@ function doPost(e) {
 
 function doGet() {
   return json_({ ok: true, message: "Poster order endpoint is live." });
+}
+
+function sendCustomerEmail_(order) {
+  if (!order.email) return;
+  MailApp.sendEmail({
+    to: order.email,
+    replyTo: REPLY_TO,
+    name: FROM_NAME,
+    subject: "Order " + order.code + " received — " + FROM_NAME,
+    body:
+      "Hi " +
+      order.name +
+      ",\n\n" +
+      "We received your poster order.\n\n" +
+      "Confirmation: " +
+      order.code +
+      "\n" +
+      "Poster: " +
+      order.poster +
+      "\n" +
+      "Size: " +
+      order.size +
+      "\n" +
+      "Quantity: " +
+      order.quantity +
+      "\n" +
+      "Total: €" +
+      order.total +
+      "\n\n" +
+      "Delivery:\n" +
+      order.street +
+      "\n" +
+      order.postal +
+      " " +
+      order.city +
+      "\n" +
+      order.country +
+      "\n\n" +
+      "We’ll email payment details shortly. Reply to this message if anything looks wrong.\n\n" +
+      "— " +
+      FROM_NAME,
+  });
+}
+
+function sendShopAlert_(order) {
+  MailApp.sendEmail({
+    to: SHOP_EMAIL,
+    replyTo: order.email || REPLY_TO,
+    name: FROM_NAME,
+    subject: "New poster order " + order.code + " — " + order.poster,
+    body:
+      "New order " +
+      order.code +
+      "\n\n" +
+      "Poster: " +
+      order.poster +
+      "\n" +
+      "Size: " +
+      order.size +
+      "\n" +
+      "Quantity: " +
+      order.quantity +
+      "\n" +
+      "Unit: €" +
+      order.unitPrice +
+      "\n" +
+      "Total: €" +
+      order.total +
+      "\n\n" +
+      "Customer: " +
+      order.name +
+      "\n" +
+      "Email: " +
+      order.email +
+      "\n" +
+      "Phone: " +
+      order.phone +
+      "\n\n" +
+      "Delivery:\n" +
+      order.street +
+      "\n" +
+      order.postal +
+      " " +
+      order.city +
+      "\n" +
+      order.country,
+  });
 }
 
 function getOrdersSheet_() {
@@ -100,7 +246,7 @@ function nextConfirmationCode_(sheet) {
   var seq = 1;
 
   if (lastRow >= 2) {
-    var codes = sheet.getRange(2, 2, lastRow, 2).getValues();
+    var codes = sheet.getRange(2, 2, lastRow - 1, 1).getValues();
     for (var i = 0; i < codes.length; i++) {
       var code = String(codes[i][0] || "");
       if (code.indexOf(prefix) === 0) {
