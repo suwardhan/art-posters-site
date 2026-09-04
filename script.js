@@ -72,19 +72,236 @@ document.addEventListener("DOMContentLoaded", () => {
   initHomePosterSlideshow();
 });
 
-// ── Load posters ──
+const POSTER_BLURB =
+  "Limited edition art print. Colour, form, and silence - made to live with you, not just to be looked at.";
+
 const masonry = document.getElementById("masonry");
 if (masonry) {
-fetch("../posters.json")
-  .then((res) => res.json())
-  .then((posters) => {
-    publishedPosters(posters).forEach((p) => {
-      const card = document.createElement("div");
-      card.className = "card";
+  let expandedCard = null;
+  let closing = false;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const imgSrc = p.image.startsWith("images/") ? `../${p.image}` : p.image;
+  const zoom = document.createElement("div");
+  zoom.className = "poster-zoom";
+  zoom.hidden = true;
+  zoom.setAttribute("role", "dialog");
+  zoom.setAttribute("aria-modal", "true");
+  zoom.setAttribute("aria-labelledby", "posterZoomTitle");
+  zoom.innerHTML = `
+    <button type="button" class="poster-zoom-backdrop" aria-label="Close poster"></button>
+    <div class="poster-zoom-layout">
+      <div class="poster-zoom-media">
+        <img alt="" />
+      </div>
+      <div class="poster-zoom-copy">
+        <h2 id="posterZoomTitle"></h2>
+        <p></p>
+        <button type="button" class="btn-buy">Buy Print</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(zoom);
 
-      card.innerHTML = `
+  const zoomLayout = zoom.querySelector(".poster-zoom-layout");
+  const zoomMedia = zoom.querySelector(".poster-zoom-media");
+  const zoomImg = zoom.querySelector("img");
+  const zoomTitle = zoom.querySelector("h2");
+  const zoomBlurb = zoom.querySelector("p");
+  const zoomCopy = zoom.querySelector(".poster-zoom-copy");
+  const zoomBuy = zoom.querySelector(".btn-buy");
+  const zoomBackdrop = zoom.querySelector(".poster-zoom-backdrop");
+
+  function detailsOnLeft(card) {
+    const grid = masonry.getBoundingClientRect();
+    if (grid.width < 540) return false;
+    const box = card.getBoundingClientRect();
+    const mid = box.left + box.width / 2;
+    return mid - grid.left > grid.width * 0.55;
+  }
+
+  let expandToken = 0;
+
+  function placeZoom(card) {
+    const grid = masonry.getBoundingClientRect();
+    const pad = 16;
+    zoomLayout.style.width = "";
+    const height = zoomLayout.offsetHeight;
+    const width = zoomLayout.offsetWidth;
+    const idealTop = card.getBoundingClientRect().top;
+    const maxTop = Math.max(pad, window.innerHeight - height - pad);
+    zoomLayout.style.top = `${Math.min(Math.max(pad, idealTop), maxTop)}px`;
+
+    const maxLeft = Math.max(pad, window.innerWidth - width - pad);
+    const idealLeft = zoomLayout.classList.contains("is-details-left")
+      ? grid.right - width
+      : grid.left;
+    zoomLayout.style.left = `${Math.min(Math.max(pad, idealLeft), maxLeft)}px`;
+  }
+
+  function finishClose(card) {
+    zoom.hidden = true;
+    zoom.classList.remove("is-preparing");
+    zoomImg.style.transition = "";
+    zoomImg.style.transform = "";
+    zoomCopy.style.transition = "";
+    zoomCopy.style.opacity = "";
+    zoomBackdrop.style.transition = "";
+    zoomBackdrop.style.opacity = "";
+    card.classList.remove("is-zoomed");
+    card.setAttribute("aria-expanded", "false");
+    expandedCard = null;
+    closing = false;
+    document.body.style.overflow = "";
+  }
+
+  function collapse() {
+    expandToken += 1;
+    if (!expandedCard || closing) return;
+    const card = expandedCard;
+    const preparing = zoom.classList.contains("is-preparing");
+
+    if (reduceMotion || preparing) {
+      finishClose(card);
+      return;
+    }
+
+    closing = true;
+    const first = zoomImg.getBoundingClientRect();
+    const last = card.querySelector("img").getBoundingClientRect();
+    zoomCopy.style.transition = "opacity 0.15s ease";
+    zoomCopy.style.opacity = "0";
+    zoomBackdrop.style.transition = "opacity 0.25s ease";
+    zoomBackdrop.style.opacity = "0";
+
+    const dx = last.left - first.left;
+    const dy = last.top - first.top;
+    const sx = last.width / Math.max(first.width, 1);
+    const sy = last.height / Math.max(first.height, 1);
+    zoomImg.style.transition = "transform 0.4s ease";
+    zoomImg.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+    window.setTimeout(() => finishClose(card), 420);
+  }
+
+  function playExpand(card, first) {
+    placeZoom(card);
+
+    if (reduceMotion) {
+      zoom.classList.remove("is-preparing");
+      card.classList.add("is-zoomed");
+      zoomCopy.style.opacity = "1";
+      zoomBackdrop.style.opacity = "1";
+      return;
+    }
+
+    const last = zoomImg.getBoundingClientRect();
+    const dx = first.left - last.left;
+    const dy = first.top - last.top;
+    const sx = first.width / Math.max(last.width, 1);
+    const sy = first.height / Math.max(last.height, 1);
+    zoomImg.style.transition = "none";
+    zoomImg.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+    void zoomImg.offsetWidth;
+    zoom.classList.remove("is-preparing");
+    card.classList.add("is-zoomed");
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        zoomImg.style.transition = "transform 0.45s ease";
+        zoomCopy.style.transition = "opacity 0.35s ease 0.12s";
+        zoomBackdrop.style.transition = "opacity 0.35s ease";
+        zoomImg.style.transform = "none";
+        zoomCopy.style.opacity = "1";
+        zoomBackdrop.style.opacity = "1";
+      });
+    });
+  }
+
+  function expand(card) {
+    if (closing) return;
+    if (expandedCard === card) {
+      collapse();
+      return;
+    }
+    if (expandedCard) {
+      expandedCard.classList.remove("is-zoomed");
+      expandedCard.setAttribute("aria-expanded", "false");
+      expandedCard = null;
+    }
+
+    const token = (expandToken += 1);
+    const thumb = card.querySelector("img");
+    const first = thumb.getBoundingClientRect();
+    const title = card.dataset.title;
+    const image = card.dataset.image;
+
+    zoomTitle.textContent = title;
+    zoomBlurb.textContent = POSTER_BLURB;
+    zoomImg.alt = title;
+    zoomBuy.dataset.title = title;
+    zoomBuy.dataset.image = image;
+    zoomLayout.classList.toggle("is-details-left", detailsOnLeft(card));
+    zoomCopy.style.opacity = "0";
+    zoomBackdrop.style.opacity = "0";
+    zoom.classList.add("is-preparing");
+    zoom.hidden = false;
+    document.body.style.overflow = "hidden";
+    card.setAttribute("aria-expanded", "true");
+    expandedCard = card;
+
+    const start = async () => {
+      if (token !== expandToken) return;
+      try {
+        if (typeof zoomImg.decode === "function") await zoomImg.decode();
+      } catch (_) {
+        /* decode can reject on broken images; layout still works after load */
+      }
+      if (token !== expandToken) return;
+      playExpand(card, first);
+    };
+
+    if (zoomImg.getAttribute("src") === image && zoomImg.complete && zoomImg.naturalWidth) {
+      start();
+    } else {
+      zoomImg.addEventListener("load", start, { once: true });
+      zoomImg.addEventListener("error", start, { once: true });
+      if (zoomImg.getAttribute("src") !== image) zoomImg.src = image;
+    }
+  }
+
+  zoomBuy.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openOrderDialog({
+      title: zoomBuy.dataset.title,
+      image: zoomBuy.dataset.image,
+    });
+  });
+  zoomCopy.addEventListener("click", (e) => e.stopPropagation());
+  zoomMedia.addEventListener("click", () => collapse());
+  zoomBackdrop.addEventListener("click", () => collapse());
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") collapse();
+  });
+
+  window.addEventListener("resize", () => {
+    if (expandedCard) collapse();
+  });
+
+  fetch("../posters.json")
+    .then((res) => res.json())
+    .then((posters) => {
+      publishedPosters(posters).forEach((p) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.setAttribute("role", "button");
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("aria-expanded", "false");
+
+        const imgSrc = p.image.startsWith("images/") ? `../${p.image}` : p.image;
+        card.dataset.title = p.title;
+        card.dataset.image = imgSrc;
+
+        card.innerHTML = `
         <img src="${imgSrc}" alt="${escapeHtml(p.title)}" loading="lazy" />
         <div class="card-overlay">
           <div class="card-info">
@@ -94,18 +311,26 @@ fetch("../posters.json")
         </div>
       `;
 
-      const buyBtn = card.querySelector(".btn-buy");
-      buyBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        openOrderDialog({
-          title: buyBtn.dataset.title,
-          image: buyBtn.dataset.image,
+        const buyBtn = card.querySelector(".btn-buy");
+        buyBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openOrderDialog({
+            title: buyBtn.dataset.title,
+            image: buyBtn.dataset.image,
+          });
         });
-      });
 
-      masonry.appendChild(card);
+        card.addEventListener("click", () => expand(card));
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            expand(card);
+          }
+        });
+
+        masonry.appendChild(card);
+      });
     });
-  });
 }
 
 function escapeHtml(str) {

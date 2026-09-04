@@ -140,6 +140,116 @@ main {
   column-gap: 1rem;
 }
 
+.poster-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+
+.poster-zoom[hidden] {
+  display: none;
+}
+
+.poster-zoom.is-preparing {
+  visibility: hidden;
+}
+
+.poster-zoom-backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  backdrop-filter: blur(3px);
+  cursor: zoom-out;
+}
+
+.poster-zoom-layout {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.85rem;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  pointer-events: none;
+}
+
+.poster-zoom-layout.is-details-left {
+  flex-direction: row-reverse;
+}
+
+.poster-zoom-layout.is-details-left .poster-zoom-copy {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.poster-zoom-layout.is-details-left .btn-buy {
+  align-self: flex-end;
+}
+
+.poster-zoom-media,
+.poster-zoom-copy {
+  pointer-events: auto;
+}
+
+.poster-zoom-media {
+  min-width: 0;
+  cursor: zoom-out;
+}
+
+.poster-zoom-media img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(100%, calc(100vw - 22rem));
+  max-height: calc(100vh - 2rem);
+  border-radius: 8px;
+  transform-origin: top left;
+  box-shadow: 0 16px 48px color-mix(in srgb, #000 28%, transparent);
+}
+
+.poster-zoom-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 0 0 18.5rem;
+  width: 18.5rem;
+  padding: 0;
+  min-width: 0;
+}
+
+.poster-zoom-copy h2 {
+  font-size: clamp(2.4rem, 5.5vw, 3.75rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+.poster-zoom-copy p {
+  display: none;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.poster-zoom .btn-buy {
+  align-self: flex-start;
+  padding: 0.75rem 1.35rem;
+  font-size: 0.95rem;
+  background: var(--text);
+  color: var(--bg);
+}
+
+.poster-zoom .btn-buy:hover {
+  opacity: 0.88;
+  background: var(--text);
+}
+
+.card.is-zoomed img,
+.card.is-zoomed .card-overlay {
+  opacity: 0;
+}
+
 /* ── Card ── */
 .card {
   break-inside: avoid;
@@ -801,6 +911,23 @@ footer {
 @media (max-width: 540px) {
   .masonry {
     columns: 1;
+  }
+
+  .poster-zoom-layout,
+  .poster-zoom-layout.is-details-left {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .poster-zoom-media img {
+    max-width: 100%;
+    max-height: calc(100vh - 12rem);
+  }
+
+  .poster-zoom-copy {
+    flex: none;
+    width: 100%;
   }
 
   .hero {
