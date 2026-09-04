@@ -2,6 +2,7 @@
   "name": "ckd-admin",
   "main": "worker/index.js",
   "compatibility_date": "2026-09-04",
+  "keep_vars": true,
   "assets": {
     "directory": "./worker/public",
     "binding": "ASSETS",
