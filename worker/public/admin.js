@@ -24,6 +24,13 @@ const toastDiscard = document.getElementById("toastDiscard");
 
 let posters = [];
 let savedPosters = [];
+let collections = [
+  { id: "bollywood", title: "Bollywood movies" },
+  { id: "furniture", title: "Furniture" },
+  { id: "bathroom", title: "Bathroom" },
+  { id: "abstract", title: "Abstract" },
+  { id: "portraits", title: "Portraits" },
+];
 let sha = "";
 let dirty = false;
 let saving = false;
@@ -66,6 +73,7 @@ openAddBtn.addEventListener("click", () => {
   }
   showAddError("");
   addForm.reset();
+  fillCollectionSelect(document.getElementById("addCollection"), "bollywood");
   addDialog.showModal();
 });
 
@@ -98,12 +106,13 @@ addForm.addEventListener("submit", async (e) => {
   try {
     const body = new FormData();
     body.set("title", title);
+    body.set("collection", String(data.get("collection") || "bollywood"));
     if (file && file.size) body.set("file", file);
     if (url) body.set("url", url);
     const res = await api("/api/posters", { method: "POST", body });
     addForm.reset();
     addDialog.close();
-    setClean(res.posters, res.sha);
+    setClean(res.posters, res.sha, res.collections);
     flash("Added. The shop updates in about a minute.");
   } catch (err) {
     showAddError(err.message);
@@ -133,16 +142,29 @@ async function boot() {
 
 async function loadPosters() {
   const res = await api("/api/posters");
-  setClean(res.posters, res.sha);
+  setClean(res.posters, res.sha, res.collections);
 }
 
-function setClean(nextPosters, nextSha) {
+function setClean(nextPosters, nextSha, nextCollections) {
   posters = nextPosters;
   savedPosters = clone(nextPosters);
+  if (Array.isArray(nextCollections) && nextCollections.length) {
+    collections = nextCollections;
+  }
   sha = nextSha;
   dirty = false;
   render();
   updateDirtyUI();
+}
+
+function fillCollectionSelect(select, selectedId) {
+  if (!select) return;
+  select.innerHTML = collections
+    .map(
+      (c) =>
+        `<option value="${escapeAttr(c.id)}"${c.id === selectedId ? " selected" : ""}>${escapeAttr(c.title)}</option>`
+    )
+    .join("");
 }
 
 function markDirty() {
@@ -187,7 +209,13 @@ function render() {
       <img src="${escapeAttr(imgSrc)}" alt="${escapeAttr(poster.title)}" />
       <div class="card-overlay">
         <div class="card-info">
-          <input type="text" class="title-input" value="${escapeAttr(poster.title)}" maxlength="120" aria-label="Poster name" />
+          <div class="card-fields">
+            <input type="text" class="title-input" value="${escapeAttr(poster.title)}" maxlength="120" aria-label="Poster name" />
+            <label class="collection-label">
+              <span class="visually-hidden">Collection</span>
+              <select class="collection-select" aria-label="Collection"></select>
+            </label>
+          </div>
           <div class="row-actions">
             <button type="button" class="hide-btn">${poster.hidden ? "Show" : "Hide"}</button>
             <button type="button" class="up-btn" ${index === 0 ? "disabled" : ""}>Up</button>
@@ -198,13 +226,20 @@ function render() {
     `;
 
     const titleInput = li.querySelector(".title-input");
+    const collectionSelect = li.querySelector(".collection-select");
+    fillCollectionSelect(collectionSelect, poster.collection || "bollywood");
     titleInput.addEventListener("mousedown", (ev) => ev.stopPropagation());
+    collectionSelect.addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".hide-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".up-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".down-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     titleInput.addEventListener("change", () => {
       poster.title = titleInput.value.trim() || poster.title;
       titleInput.value = poster.title;
+      markDirty();
+    });
+    collectionSelect.addEventListener("change", () => {
+      poster.collection = collectionSelect.value;
       markDirty();
     });
 
@@ -258,7 +293,7 @@ async function saveCatalog() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ posters, sha }),
     });
-    setClean(res.posters, res.sha);
+    setClean(res.posters, res.sha, res.collections);
     flash("Saved. The shop updates in about a minute.");
   } catch (err) {
     showError(err.message);

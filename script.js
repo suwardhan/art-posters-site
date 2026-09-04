@@ -50,6 +50,64 @@ function publishedPosters(posters) {
   return (posters || []).filter((p) => p && p.hidden !== true);
 }
 
+function catalogPosters(data) {
+  if (Array.isArray(data)) return data;
+  return Array.isArray(data?.posters) ? data.posters : [];
+}
+
+const COLLECTIONS = [
+  { id: "bollywood", title: "Bollywood movies" },
+  { id: "furniture", title: "Furniture" },
+  { id: "bathroom", title: "Bathroom" },
+  { id: "abstract", title: "Abstract" },
+  { id: "portraits", title: "Portraits" },
+];
+
+function collectionById(id) {
+  return COLLECTIONS.find((c) => c.id === id) || COLLECTIONS[0];
+}
+
+function collectionFromHash() {
+  const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
+  return COLLECTIONS.some((c) => c.id === id) ? id : "bollywood";
+}
+
+function mountCollectionTabs(activeId) {
+  const tabsEl = document.getElementById("collectionTabs");
+  if (!tabsEl) return;
+  const onGallery = Boolean(document.getElementById("masonry"));
+  const prefix = onGallery ? "#" : "posters/#";
+  tabsEl.innerHTML = "";
+  COLLECTIONS.forEach((collection) => {
+    const tab = document.createElement("a");
+    tab.className = "collection-tab" + (collection.id === activeId ? " is-active" : "");
+    tab.href = prefix + collection.id;
+    tab.textContent = collection.title;
+    tab.dataset.collection = collection.id;
+    if (onGallery) {
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-selected", collection.id === activeId ? "true" : "false");
+    }
+    tabsEl.appendChild(tab);
+  });
+}
+
+function syncCollectionTabs(activeId) {
+  const tabsEl = document.getElementById("collectionTabs");
+  if (!tabsEl) return;
+  if (!tabsEl.children.length) {
+    mountCollectionTabs(activeId);
+    return;
+  }
+  tabsEl.querySelectorAll(".collection-tab").forEach((tab) => {
+    const on = tab.dataset.collection === activeId;
+    tab.classList.toggle("is-active", on);
+    if (tab.hasAttribute("aria-selected")) {
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+    }
+  });
+}
+
 // ── Theme toggle ──
 (function () {
   const stored = localStorage.getItem("theme");
@@ -287,21 +345,50 @@ if (masonry) {
     if (expandedCard) collapse();
   });
 
-  fetch("../posters.json")
-    .then((res) => res.json())
-    .then((posters) => {
-      publishedPosters(posters).forEach((p) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.setAttribute("role", "button");
-        card.setAttribute("tabindex", "0");
-        card.setAttribute("aria-expanded", "false");
+  const heroTitle = document.getElementById("collectionHeroTitle");
+  const heroCopy = document.getElementById("collectionHeroCopy");
+  const PLACEHOLDER_COUNT = 8;
+  const PLACEHOLDER_RATIOS = ["3 / 4", "2 / 3", "4 / 5", "3 / 5", "5 / 7", "2 / 3", "3 / 4", "4 / 5"];
+  let allPosters = [];
+  let activeCollection = collectionFromHash();
 
-        const imgSrc = p.image.startsWith("images/") ? `../${p.image}` : p.image;
-        card.dataset.title = p.title;
-        card.dataset.image = imgSrc;
+  function setHero(collection) {
+    if (!heroTitle || !heroCopy) return;
+    if (collection.id === "bollywood") {
+      heroTitle.textContent = "Bollywood, reimagined.";
+      heroCopy.textContent = "Limited edition art prints of classic Indian cinema.";
+    } else {
+      heroTitle.textContent = `${collection.title}.`;
+      heroCopy.textContent = "Limited edition art prints.";
+    }
+  }
 
-        card.innerHTML = `
+  mountCollectionTabs(activeCollection);
+  setHero(collectionById(activeCollection));
+
+  function appendPlaceholder(index) {
+    const card = document.createElement("div");
+    card.className = "card is-placeholder";
+    card.setAttribute("aria-hidden", "true");
+    const block = document.createElement("div");
+    block.className = "placeholder-block";
+    block.style.aspectRatio = PLACEHOLDER_RATIOS[index % PLACEHOLDER_RATIOS.length];
+    card.appendChild(block);
+    masonry.appendChild(card);
+  }
+
+  function appendPoster(p) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-expanded", "false");
+
+    const imgSrc = p.image.startsWith("images/") ? `../${p.image}` : p.image;
+    card.dataset.title = p.title;
+    card.dataset.image = imgSrc;
+
+    card.innerHTML = `
         <img src="${imgSrc}" alt="${escapeHtml(p.title)}" loading="lazy" />
         <div class="card-overlay">
           <div class="card-info">
@@ -311,26 +398,64 @@ if (masonry) {
         </div>
       `;
 
-        const buyBtn = card.querySelector(".btn-buy");
-        buyBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          openOrderDialog({
-            title: buyBtn.dataset.title,
-            image: buyBtn.dataset.image,
-          });
-        });
-
-        card.addEventListener("click", () => expand(card));
-        card.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            expand(card);
-          }
-        });
-
-        masonry.appendChild(card);
+    const buyBtn = card.querySelector(".btn-buy");
+    buyBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openOrderDialog({
+        title: buyBtn.dataset.title,
+        image: buyBtn.dataset.image,
       });
     });
+
+    card.addEventListener("click", () => expand(card));
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        expand(card);
+      }
+    });
+
+    masonry.appendChild(card);
+  }
+
+  function renderCollection() {
+    collapse();
+    const collection = collectionById(activeCollection);
+    setHero(collection);
+    syncCollectionTabs(activeCollection);
+    masonry.innerHTML = "";
+    const items = publishedPosters(allPosters).filter(
+      (p) => (p.collection || "bollywood") === activeCollection
+    );
+    items.forEach(appendPoster);
+    const placeholders = Math.max(0, PLACEHOLDER_COUNT - items.length);
+    for (let i = 0; i < placeholders; i++) appendPlaceholder(i);
+  }
+
+  function selectCollection(id, updateHash) {
+    const next = collectionById(id).id;
+    if (next === activeCollection && masonry.children.length) {
+      syncCollectionTabs(activeCollection);
+      return;
+    }
+    activeCollection = next;
+    if (updateHash) {
+      history.replaceState(null, "", `#${activeCollection}`);
+    }
+    renderCollection();
+  }
+
+  fetch("../posters.json")
+    .then((res) => res.json())
+    .then((data) => {
+      allPosters = catalogPosters(data);
+      activeCollection = collectionFromHash();
+      renderCollection();
+    });
+
+  window.addEventListener("hashchange", () => {
+    selectCollection(collectionFromHash(), false);
+  });
 }
 
 function escapeHtml(str) {
@@ -351,10 +476,10 @@ function initHomePosterSlideshow() {
 
   fetch("posters.json")
     .then((res) => res.json())
-    .then((posters) => {
-      const urls = publishedPosters(posters).map((p) =>
-        p.image.startsWith("images/") ? p.image : p.image
-      );
+    .then((data) => {
+      const urls = publishedPosters(catalogPosters(data))
+        .filter((p) => (p.collection || "bollywood") === "bollywood")
+        .map((p) => (p.image.startsWith("images/") ? p.image : p.image));
       if (!urls.length) return;
 
       slides[0].src = urls[0];

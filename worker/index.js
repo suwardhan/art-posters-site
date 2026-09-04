@@ -1,3 +1,11 @@
+const COLLECTIONS = [
+  { id: "bollywood", title: "Bollywood movies" },
+  { id: "furniture", title: "Furniture" },
+  { id: "bathroom", title: "Bathroom" },
+  { id: "abstract", title: "Abstract" },
+  { id: "portraits", title: "Portraits" },
+];
+const DEFAULT_COLLECTION = "bollywood";
 const SESSION_COOKIE = "ckd_session";
 const STATE_COOKIE = "ckd_oauth_state";
 const SESSION_TTL_SEC = 60 * 60 * 24 * 7;
@@ -47,7 +55,7 @@ async function handleApp(request, env, url) {
 
   if (url.pathname === "/api/posters" && request.method === "GET") {
     const file = await getRepoFile(env, "posters.json");
-    return json({ posters: normalizeCatalog(file.text), sha: file.sha });
+    return json({ posters: normalizeCatalog(file.text), collections: COLLECTIONS, sha: file.sha });
   }
 
   if (url.pathname === "/api/posters" && request.method === "PUT") {
@@ -64,7 +72,7 @@ async function handleApp(request, env, url) {
       current.sha,
       `admin: update posters (${session.login})`
     );
-    return json({ posters, sha: saved.sha });
+    return json({ posters, collections: COLLECTIONS, sha: saved.sha });
   }
 
   if (url.pathname === "/api/posters" && request.method === "POST") {
@@ -77,11 +85,13 @@ async function handleApp(request, env, url) {
 async function addPoster(request, env, session) {
   const contentType = request.headers.get("content-type") || "";
   let title = "";
+  let collection = DEFAULT_COLLECTION;
   let imageBytes = null;
 
   if (contentType.includes("multipart/form-data")) {
     const form = await request.formData();
     title = String(form.get("title") || "").trim();
+    collection = collectionId(form.get("collection"));
     const file = form.get("file");
     const imageUrl = String(form.get("url") || "").trim();
 
@@ -96,6 +106,7 @@ async function addPoster(request, env, session) {
   } else {
     const body = await request.json();
     title = String(body.title || "").trim();
+    collection = collectionId(body.collection);
     if (body.url) imageBytes = await fetchImageBytes(String(body.url));
   }
 
@@ -120,7 +131,7 @@ async function addPoster(request, env, session) {
 
   const fresh = await getRepoFile(env, "posters.json");
   const next = normalizeCatalog(fresh.text);
-  next.push({ id, title, image: imagePath, hidden: false });
+  next.push({ id, title, image: imagePath, hidden: false, collection });
 
   const saved = await putRepoFile(
     env,
@@ -130,7 +141,7 @@ async function addPoster(request, env, session) {
     `admin: add poster ${title} (${session.login})`
   );
 
-  return json({ posters: next, sha: saved.sha });
+  return json({ posters: next, collections: COLLECTIONS, sha: saved.sha });
 }
 
 async function startLogin(url, env) {
@@ -317,6 +328,11 @@ function repoParts(env) {
   return { owner, repo };
 }
 
+function collectionId(value) {
+  const id = String(value || "").trim();
+  return COLLECTIONS.some((c) => c.id === id) ? id : DEFAULT_COLLECTION;
+}
+
 function normalizeCatalog(text) {
   let parsed;
   try {
@@ -324,7 +340,7 @@ function normalizeCatalog(text) {
   } catch {
     parsed = [];
   }
-  if (!Array.isArray(parsed)) parsed = [];
+  if (!Array.isArray(parsed)) parsed = Array.isArray(parsed?.posters) ? parsed.posters : [];
   const used = new Set();
   return parsed.map((p, i) => {
     const title = String(p.title || "Untitled").trim() || "Untitled";
@@ -338,6 +354,7 @@ function normalizeCatalog(text) {
       title,
       image,
       hidden: Boolean(p.hidden),
+      collection: collectionId(p.collection),
     };
   });
 }
@@ -359,6 +376,7 @@ function sanitizeCatalog(incoming, current) {
       title,
       image: existing.image,
       hidden: Boolean(item.hidden),
+      collection: collectionId(item.collection || existing.collection),
     });
   }
 

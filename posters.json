@@ -3,54 +3,63 @@
     "id": "jaane-bhi-do-yaaron",
     "title": "Jaane Bhi Do Yaaron",
     "image": "images/jaane-bhi-do-yaaron.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "karan-arjun",
     "title": "Karan arjun",
     "image": "images/karan-arjun.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "pyaasa",
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "baazigar",
     "title": "Baazigar",
     "image": "images/baazigar.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "khoon-bhari-mang",
     "title": "Khoon Bhari Mang",
     "image": "images/khoon-bhari-mang.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "mr-india",
     "title": "Mr India",
     "image": "images/mr-india.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "shaan",
     "title": "Shaan",
     "image": "images/shaan.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "znmd",
     "title": "ZNMD",
     "image": "images/znmd.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   },
   {
     "id": "dangal",
     "title": "Dangal",
     "image": "images/dangal.jpg",
-    "hidden": false
+    "hidden": false,
+    "collection": "bollywood"
   }
 ]
