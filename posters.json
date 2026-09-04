@@ -36,15 +36,15 @@
     "hidden": false
   },
   {
-    "id": "znmd",
-    "title": "ZNMD",
-    "image": "images/znmd.jpg",
-    "hidden": false
-  },
-  {
     "id": "pyaasa",
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
+    "hidden": false
+  },
+  {
+    "id": "znmd",
+    "title": "ZNMD",
+    "image": "images/znmd.jpg",
     "hidden": false
   },
   {
