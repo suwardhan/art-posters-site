@@ -30,15 +30,15 @@
     "hidden": false
   },
   {
-    "id": "baazigar",
-    "title": "Baazigar",
-    "image": "images/baazigar.jpg",
-    "hidden": false
-  },
-  {
     "id": "pyaasa",
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
+    "hidden": false
+  },
+  {
+    "id": "baazigar",
+    "title": "Baazigar",
+    "image": "images/baazigar.jpg",
     "hidden": false
   },
   {
