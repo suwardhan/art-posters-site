@@ -42,15 +42,15 @@
     "hidden": false
   },
   {
-    "id": "dangal",
-    "title": "Dangal",
-    "image": "images/dangal.jpg",
-    "hidden": false
-  },
-  {
     "id": "pyaasa",
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
+    "hidden": false
+  },
+  {
+    "id": "dangal",
+    "title": "Dangal",
+    "image": "images/dangal.jpg",
     "hidden": false
   }
 ]
