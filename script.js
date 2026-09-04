@@ -46,6 +46,10 @@ function priceForSize(sizeId) {
   return match ? match.price : 0;
 }
 
+function publishedPosters(posters) {
+  return (posters || []).filter((p) => p && p.hidden !== true);
+}
+
 // ── Theme toggle ──
 (function () {
   const stored = localStorage.getItem("theme");
@@ -74,7 +78,7 @@ if (masonry) {
 fetch("../posters.json")
   .then((res) => res.json())
   .then((posters) => {
-    posters.forEach((p) => {
+    publishedPosters(posters).forEach((p) => {
       const card = document.createElement("div");
       card.className = "card";
 
@@ -123,7 +127,7 @@ function initHomePosterSlideshow() {
   fetch("posters.json")
     .then((res) => res.json())
     .then((posters) => {
-      const urls = posters.map((p) =>
+      const urls = publishedPosters(posters).map((p) =>
         p.image.startsWith("images/") ? p.image : p.image
       );
       if (!urls.length) return;

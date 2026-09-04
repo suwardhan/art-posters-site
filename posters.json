@@ -1,43 +1,50 @@
 [
   {
+    "id": "jaane-bhi-do-yaaron",
     "title": "Jaane bhi do yaaron",
     "image": "images/jaane-bhi-do-yaaron.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "karan-arjun",
     "title": "Karan arjun",
     "image": "images/karan-arjun.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "khoon-bhari-mang",
     "title": "Khoon bhari mang",
     "image": "images/khoon-bhari-mang.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "mr-india",
     "title": "Mr India",
     "image": "images/mr-india.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "shaan",
     "title": "Shaan",
     "image": "images/shaan.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "znmd",
     "title": "ZNMD",
     "image": "images/znmd.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "baazigar",
     "title": "Baazigar",
     "image": "images/baazigar.jpg",
-    "buyUrl": "#"
+    "hidden": false
   },
   {
+    "id": "dangal",
     "title": "Dangal",
     "image": "images/dangal.jpg",
-    "buyUrl": "#"
+    "hidden": false
   }
 ]
-
