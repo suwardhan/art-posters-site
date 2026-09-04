@@ -18,15 +18,15 @@
     "hidden": false
   },
   {
-    "id": "khoon-bhari-mang",
-    "title": "Khoon bhari mang",
-    "image": "images/khoon-bhari-mang.jpg",
-    "hidden": false
-  },
-  {
     "id": "pyaasa",
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
+    "hidden": false
+  },
+  {
+    "id": "khoon-bhari-mang",
+    "title": "Khoon bhari mang",
+    "image": "images/khoon-bhari-mang.jpg",
     "hidden": false
   },
   {
