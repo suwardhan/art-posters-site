@@ -18,6 +18,12 @@
     "hidden": false
   },
   {
+    "id": "pyaasa",
+    "title": "Pyaasa",
+    "image": "images/pyaasa.png",
+    "hidden": false
+  },
+  {
     "id": "mr-india",
     "title": "Mr India",
     "image": "images/mr-india.jpg",
@@ -27,12 +33,6 @@
     "id": "shaan",
     "title": "Shaan",
     "image": "images/shaan.jpg",
-    "hidden": false
-  },
-  {
-    "id": "pyaasa",
-    "title": "Pyaasa",
-    "image": "images/pyaasa.png",
     "hidden": false
   },
   {
