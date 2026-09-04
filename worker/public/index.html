@@ -36,33 +36,49 @@
           <p class="kicker">Admin</p>
           <h1>Posters</h1>
         </div>
-        <p class="status" id="status" hidden></p>
-      </header>
-
-      <form class="add-card" id="addForm">
-        <h2>Add poster</h2>
-        <label>
-          Title
-          <input type="text" name="title" required maxlength="120" placeholder="Film title" />
-        </label>
-        <div class="add-row">
-          <label>
-            Upload image
-            <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" />
-          </label>
-          <label>
-            Or image URL
-            <input type="url" name="url" placeholder="https://…" />
-          </label>
+        <div class="page-head-actions">
+          <p class="status" id="status" hidden></p>
+          <button type="button" class="btn-secondary" id="openAddBtn">Add poster</button>
+          <button type="button" class="btn-primary" id="saveBtn" disabled>Save</button>
         </div>
-        <button type="submit" class="btn-primary" id="addBtn">Add poster</button>
-      </form>
+      </header>
 
       <p class="error" id="error" hidden></p>
 
       <ul class="poster-list" id="posterList"></ul>
     </section>
   </main>
+
+  <dialog id="addDialog" class="add-dialog" aria-labelledby="addDialogTitle">
+    <button type="button" class="add-dialog-close" id="addDialogClose" aria-label="Close">&times;</button>
+    <form class="add-card" id="addForm">
+      <h2 id="addDialogTitle">Add poster</h2>
+      <label>
+        Title
+        <input type="text" name="title" required maxlength="120" placeholder="Film title" />
+      </label>
+      <div class="add-row">
+        <label>
+          Upload image
+          <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+        </label>
+        <label>
+          Or image URL
+          <input type="url" name="url" placeholder="https://…" />
+        </label>
+      </div>
+      <p class="error" id="addError" hidden></p>
+      <button type="submit" class="btn-primary" id="addBtn">Add poster</button>
+    </form>
+  </dialog>
+
+  <div class="unsaved-toast" id="unsavedToast" hidden>
+    <p>You have unsaved changes</p>
+    <div class="unsaved-toast-actions">
+      <button type="button" id="toastDiscard">Discard</button>
+      <button type="button" class="btn-primary" id="toastSave">Save</button>
+    </div>
+  </div>
 
   <script src="admin.js"></script>
 </body>

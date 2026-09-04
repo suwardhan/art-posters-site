@@ -1,0 +1,10 @@
+{
+  "name": "art-posters-site",
+  "private": true,
+  "scripts": {
+    "dev:admin": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.86.0"
+  }
+}

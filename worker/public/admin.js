@@ -10,13 +10,28 @@ const errorEl = document.getElementById("error");
 const statusEl = document.getElementById("status");
 const addForm = document.getElementById("addForm");
 const addBtn = document.getElementById("addBtn");
+const openAddBtn = document.getElementById("openAddBtn");
+const addDialog = document.getElementById("addDialog");
+const addDialogClose = document.getElementById("addDialogClose");
+const addErrorEl = document.getElementById("addError");
+const saveBtn = document.getElementById("saveBtn");
 const userLabel = document.getElementById("userLabel");
 const logoutBtn = document.getElementById("logoutBtn");
 const loginHint = document.getElementById("loginHint");
+const unsavedToast = document.getElementById("unsavedToast");
+const toastSave = document.getElementById("toastSave");
+const toastDiscard = document.getElementById("toastDiscard");
 
 let posters = [];
+let savedPosters = [];
 let sha = "";
+let dirty = false;
+let saving = false;
 let repo = { owner: "suwardhan", repo: "art-posters-site", branch: "main" };
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
 
 document.getElementById("themeToggle").addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");
@@ -26,25 +41,59 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 });
 
 logoutBtn.addEventListener("click", async () => {
+  if (dirty && !window.confirm("You have unsaved changes. Log out anyway?")) {
+    return;
+  }
+  dirty = false;
   await fetch("/auth/logout", { method: "POST" });
   window.location.reload();
 });
 
+window.addEventListener("beforeunload", (e) => {
+  if (!dirty) return;
+  e.preventDefault();
+  e.returnValue = "";
+});
+
+saveBtn.addEventListener("click", () => saveCatalog());
+toastSave.addEventListener("click", () => saveCatalog());
+toastDiscard.addEventListener("click", () => discardChanges());
+
+openAddBtn.addEventListener("click", () => {
+  if (dirty) {
+    showError("Save or discard your changes before adding a poster.");
+    return;
+  }
+  showAddError("");
+  addForm.reset();
+  addDialog.showModal();
+});
+
+addDialogClose.addEventListener("click", () => addDialog.close());
+addDialog.addEventListener("click", (e) => {
+  if (e.target === addDialog) addDialog.close();
+});
+
 addForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (dirty) {
+    showAddError("Save or discard your changes before adding a poster.");
+    return;
+  }
+
   const data = new FormData(addForm);
   const title = String(data.get("title") || "").trim();
   const file = data.get("file");
   const url = String(data.get("url") || "").trim();
   if (!title) return;
   if (!(file && file.size) && !url) {
-    showError("Upload a file or paste an image URL.");
+    showAddError("Upload a file or paste an image URL.");
     return;
   }
 
   addBtn.disabled = true;
   addBtn.textContent = "Adding…";
-  showError("");
+  showAddError("");
 
   try {
     const body = new FormData();
@@ -52,16 +101,15 @@ addForm.addEventListener("submit", async (e) => {
     if (file && file.size) body.set("file", file);
     if (url) body.set("url", url);
     const res = await api("/api/posters", { method: "POST", body });
-    posters = res.posters;
-    sha = res.sha;
     addForm.reset();
-    render();
+    addDialog.close();
+    setClean(res.posters, res.sha);
     flash("Added. The shop updates in about a minute.");
   } catch (err) {
-    showError(err.message);
+    showAddError(err.message);
   } finally {
-    addBtn.disabled = false;
     addBtn.textContent = "Add poster";
+    updateDirtyUI();
   }
 });
 
@@ -85,9 +133,41 @@ async function boot() {
 
 async function loadPosters() {
   const res = await api("/api/posters");
-  posters = res.posters;
-  sha = res.sha;
+  setClean(res.posters, res.sha);
+}
+
+function setClean(nextPosters, nextSha) {
+  posters = nextPosters;
+  savedPosters = clone(nextPosters);
+  sha = nextSha;
+  dirty = false;
   render();
+  updateDirtyUI();
+}
+
+function markDirty() {
+  dirty = true;
+  updateDirtyUI();
+}
+
+function discardChanges() {
+  posters = clone(savedPosters);
+  dirty = false;
+  showError("");
+  render();
+  updateDirtyUI();
+  flash("Changes discarded.");
+}
+
+function updateDirtyUI() {
+  unsavedToast.hidden = !dirty;
+  saveBtn.disabled = !dirty || saving;
+  saveBtn.classList.toggle("is-saving", saving);
+  saveBtn.textContent = saving ? "Saving…" : "Save";
+  toastSave.disabled = saving;
+  toastDiscard.disabled = saving;
+  addBtn.disabled = dirty || saving;
+  openAddBtn.disabled = dirty || saving;
 }
 
 function render() {
@@ -100,32 +180,38 @@ function render() {
 
     const imgSrc = rawImageUrl(poster.image);
     li.innerHTML = `
-      <button type="button" class="drag-handle" aria-label="Drag to reorder">::</button>
-      <img src="${escapeAttr(imgSrc)}" alt="" />
-      <div class="poster-fields">
-        <label>
-          Name
-          <input type="text" class="title-input" value="${escapeAttr(poster.title)}" maxlength="120" />
-        </label>
+      <div class="card-meta">
+        <button type="button" class="drag-handle" aria-label="Drag to reorder">::</button>
+        <span class="poster-number">${index + 1}</span>
       </div>
-      <div class="row-actions">
-        <button type="button" class="hide-btn">${poster.hidden ? "Show" : "Hide"}</button>
-        <button type="button" class="up-btn" ${index === 0 ? "disabled" : ""}>Up</button>
-        <button type="button" class="down-btn" ${index === posters.length - 1 ? "disabled" : ""}>Down</button>
+      <img src="${escapeAttr(imgSrc)}" alt="${escapeAttr(poster.title)}" />
+      <div class="card-overlay">
+        <div class="card-info">
+          <input type="text" class="title-input" value="${escapeAttr(poster.title)}" maxlength="120" aria-label="Poster name" />
+          <div class="row-actions">
+            <button type="button" class="hide-btn">${poster.hidden ? "Show" : "Hide"}</button>
+            <button type="button" class="up-btn" ${index === 0 ? "disabled" : ""}>Up</button>
+            <button type="button" class="down-btn" ${index === posters.length - 1 ? "disabled" : ""}>Down</button>
+          </div>
+        </div>
       </div>
     `;
 
     const titleInput = li.querySelector(".title-input");
     titleInput.addEventListener("mousedown", (ev) => ev.stopPropagation());
+    li.querySelector(".hide-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
+    li.querySelector(".up-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
+    li.querySelector(".down-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     titleInput.addEventListener("change", () => {
       poster.title = titleInput.value.trim() || poster.title;
       titleInput.value = poster.title;
-      saveCatalog();
+      markDirty();
     });
 
     li.querySelector(".hide-btn").addEventListener("click", () => {
       poster.hidden = !poster.hidden;
-      saveCatalog();
+      markDirty();
+      render();
     });
     li.querySelector(".up-btn").addEventListener("click", () => move(index, index - 1));
     li.querySelector(".down-btn").addEventListener("click", () => move(index, index + 1));
@@ -156,27 +242,29 @@ function move(from, to) {
   if (to < 0 || to >= posters.length) return;
   const [item] = posters.splice(from, 1);
   posters.splice(to, 0, item);
-  saveCatalog();
+  markDirty();
+  render();
 }
 
 async function saveCatalog() {
+  if (!dirty || saving) return;
+  saving = true;
+  updateDirtyUI();
   showError("");
-  render();
+
   try {
     const res = await api("/api/posters", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ posters, sha }),
     });
-    posters = res.posters;
-    sha = res.sha;
-    render();
+    setClean(res.posters, res.sha);
     flash("Saved. The shop updates in about a minute.");
   } catch (err) {
     showError(err.message);
-    try {
-      await loadPosters();
-    } catch (_) {}
+  } finally {
+    saving = false;
+    updateDirtyUI();
   }
 }
 
@@ -195,6 +283,11 @@ async function api(path, options = {}) {
     throw err;
   }
   return data;
+}
+
+function showAddError(message) {
+  addErrorEl.hidden = !message;
+  addErrorEl.textContent = message || "";
 }
 
 function showError(message) {

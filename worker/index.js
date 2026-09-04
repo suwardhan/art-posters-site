@@ -33,7 +33,7 @@ async function handleApp(request, env, url) {
     return finishLogin(request, url, env);
   }
   if (url.pathname === "/auth/logout" && request.method === "POST") {
-    return logout();
+    return logout(url);
   }
 
   const session = await readSession(request, env);
@@ -155,7 +155,7 @@ async function startLogin(url, env) {
   });
   res.headers.append(
     "Set-Cookie",
-    cookie(STATE_COOKIE, state, { maxAge: 600, httpOnly: true })
+    cookie(STATE_COOKIE, state, { maxAge: 600, httpOnly: true, secure: isHttps(url) })
   );
   return res;
 }
@@ -199,7 +199,11 @@ async function finishLogin(request, url, env) {
   const login = String(user.login || "").toLowerCase();
   const allowed = allowedUsers(env);
 
-  const clearState = cookie(STATE_COOKIE, "", { maxAge: 0, httpOnly: true });
+  const clearState = cookie(STATE_COOKIE, "", {
+    maxAge: 0,
+    httpOnly: true,
+    secure: isHttps(url),
+  });
 
   if (!allowed.includes(login)) {
     const res = new Response("This GitHub account is not allowed to use admin.", {
@@ -218,16 +222,20 @@ async function finishLogin(request, url, env) {
   res.headers.append("Set-Cookie", clearState);
   res.headers.append(
     "Set-Cookie",
-    cookie(SESSION_COOKIE, session, { maxAge: SESSION_TTL_SEC, httpOnly: true })
+    cookie(SESSION_COOKIE, session, {
+      maxAge: SESSION_TTL_SEC,
+      httpOnly: true,
+      secure: isHttps(url),
+    })
   );
   return res;
 }
 
-function logout() {
+function logout(url) {
   const res = json({ ok: true });
   res.headers.append(
     "Set-Cookie",
-    cookie(SESSION_COOKIE, "", { maxAge: 0, httpOnly: true })
+    cookie(SESSION_COOKIE, "", { maxAge: 0, httpOnly: true, secure: isHttps(url) })
   );
   return res;
 }
@@ -478,13 +486,13 @@ function nowSec() {
   return Math.floor(Date.now() / 1000);
 }
 
-function cookie(name, value, { maxAge, httpOnly }) {
-  const parts = [
-    `${name}=${value}`,
-    "Path=/",
-    "Secure",
-    "SameSite=Lax",
-  ];
+function isHttps(url) {
+  return url.protocol === "https:";
+}
+
+function cookie(name, value, { maxAge, httpOnly, secure }) {
+  const parts = [`${name}=${value}`, "Path=/", "SameSite=Lax"];
+  if (secure) parts.push("Secure");
   if (httpOnly) parts.push("HttpOnly");
   parts.push(`Max-Age=${maxAge}`);
   return parts.join("; ");
