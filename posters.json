@@ -1,15 +1,15 @@
 [
   {
-    "id": "karan-arjun",
-    "title": "Karan arjun",
-    "image": "images/karan-arjun.jpg",
-    "hidden": false
-  },
-  {
     "id": "jaane-bhi-do-yaaron",
     "title": "Jaane Bhi Do Yaaron",
     "image": "images/jaane-bhi-do-yaaron.jpg",
     "hidden": true
+  },
+  {
+    "id": "karan-arjun",
+    "title": "Karan arjun",
+    "image": "images/karan-arjun.jpg",
+    "hidden": false
   },
   {
     "id": "pyaasa",
