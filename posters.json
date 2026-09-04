@@ -12,15 +12,15 @@
     "hidden": false
   },
   {
-    "id": "khoon-bhari-mang",
-    "title": "Khoon bhari mang",
-    "image": "images/khoon-bhari-mang.jpg",
-    "hidden": false
-  },
-  {
     "id": "baazigar",
     "title": "Baazigar",
     "image": "images/baazigar.jpg",
+    "hidden": false
+  },
+  {
+    "id": "khoon-bhari-mang",
+    "title": "Khoon bhari mang",
+    "image": "images/khoon-bhari-mang.jpg",
     "hidden": false
   },
   {
