@@ -30,15 +30,15 @@
     "hidden": false
   },
   {
-    "id": "znmd",
-    "title": "ZNMD",
-    "image": "images/znmd.jpg",
-    "hidden": false
-  },
-  {
     "id": "baazigar",
     "title": "Baazigar",
     "image": "images/baazigar.jpg",
+    "hidden": false
+  },
+  {
+    "id": "znmd",
+    "title": "ZNMD",
+    "image": "images/znmd.jpg",
     "hidden": false
   },
   {
