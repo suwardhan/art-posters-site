@@ -50,14 +50,14 @@
   <dialog id="orderDialog" class="order-dialog" aria-labelledby="orderDialogTitle">
     <button type="button" class="order-close" id="orderClose" aria-label="Close">&times;</button>
 
-    <div class="order-form-view" id="orderFormView">
-      <div class="order-layout">
+    <div class="order-layout" id="orderLayout">
         <aside class="order-preview">
           <img id="orderPosterImg" src="" alt="" />
           <h2 id="orderDialogTitle" class="order-poster-title"></h2>
           <p class="order-unit-price" id="orderUnitPrice">€40 per print</p>
         </aside>
 
+        <div class="order-form-view" id="orderFormView">
         <form id="orderForm" class="order-form" novalidate>
           <input type="hidden" id="orderPosterTitle" name="poster" />
 
@@ -125,23 +125,24 @@
           <p class="order-error" id="orderError" hidden></p>
 
           <button type="submit" class="order-submit" id="orderSubmit">Place order</button>
-          <p class="order-note">You'll get a confirmation email. Pay via PayPal to complete the order.</p>
+          <p class="order-note">You'll get a confirmation email. Pay by bank transfer or PayPal to complete the order.</p>
         </form>
+        </div>
 
-        <section class="order-faq" aria-label="Order FAQ">
+        <section class="order-faq" id="orderFaq" aria-label="Order FAQ">
           <h3 class="order-faq-heading">Questions before you order</h3>
           <details class="order-faq-item">
             <summary>How do I pay?</summary>
             <p>
-              Place the order first, then pay on PayPal
+              Place the order first, then pay directly by SEPA bank transfer or via PayPal
               (<a href="https://www.paypal.me/chaudharikidiary" target="_blank" rel="noopener noreferrer">@chaudharikidiary</a>).
-              Put your confirmation code in the payment note so we can match it.
+              Put your confirmation code in the transfer reference or PayPal note so we can match it.
             </p>
           </details>
           <details class="order-faq-item">
             <summary>When will it ship?</summary>
             <p>
-              After we receive your PayPal payment, we ship in 3–5 business days.
+              After we receive your payment, we ship in 3–5 business days.
               You'll get a confirmation email when the order is placed.
             </p>
           </details>
@@ -160,34 +161,126 @@
             </p>
           </details>
         </section>
-      </div>
-    </div>
 
-    <div class="order-confirm-view" id="orderConfirmView" hidden>
-      <div class="order-confirm">
-        <p class="order-confirm-label">Order received</p>
-        <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
-        <p class="order-confirm-copy">
-          Please pay <strong id="orderConfirmTotal">€0</strong> on PayPal.
-          Include your confirmation code in the payment note.
-        </p>
-        <a
-          class="order-paypal"
-          href="https://www.paypal.me/chaudharikidiary"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          PayPal @chaudharikidiary
-        </a>
-        <p class="order-confirm-copy">
-          Once the amount is received, we'll ship in 3-5 business days.
-          A confirmation email is on its way.
-        </p>
-        <button type="button" class="order-submit" id="orderDone">Done</button>
-      </div>
+        <div class="order-confirm-view" id="orderConfirmView" hidden>
+          <div class="order-confirm">
+            <div class="order-confirm-header">
+              <p class="order-confirm-label">Order received</p>
+              <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
+              <p class="order-confirm-copy">A confirmation email is on its way.</p>
+            </div>
+
+            <div class="order-confirm-pay">
+              <p class="order-confirm-label">Payment pending</p>
+              <p class="order-confirm-copy">
+                Pay <strong id="orderConfirmTotal">€0</strong> with one of the options below.
+                Put your confirmation code in the payment reference so we can match it.
+              </p>
+            </div>
+
+            <div class="order-pay-methods" id="orderPayOptions">
+              <section class="order-pay-method" id="orderBankPay" data-pay="bank" hidden>
+                <button type="button" class="order-pay-method-toggle" aria-expanded="false">
+                  <span class="order-pay-method-copy">
+                    <span class="order-pay-card-title">Pay directly</span>
+                    <span class="order-pay-card-copy">SEPA bank transfer</span>
+                  </span>
+                </button>
+                <div class="order-pay-method-panel">
+                  <div class="order-pay-method-clip">
+                  <div class="order-pay-method-body">
+                    <p class="order-pay-test" id="orderPayTestNote" hidden>
+                      Sample bank details for layout — do not send money here.
+                    </p>
+                    <p class="order-pay-card-copy">Scan with your banking app, or copy the details.</p>
+                    <div class="order-pay-qr" id="orderGirocode"></div>
+                    <dl class="order-bank-details">
+                      <div>
+                        <dt>Name</dt>
+                        <dd id="orderBankName"></dd>
+                      </div>
+                      <div>
+                        <dt>IBAN</dt>
+                        <dd>
+                          <span id="orderBankIban"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderBankIban">Copy</button>
+                        </dd>
+                      </div>
+                      <div id="orderBankBicRow" hidden>
+                        <dt>BIC</dt>
+                        <dd id="orderBankBic"></dd>
+                      </div>
+                      <div>
+                        <dt>Amount</dt>
+                        <dd id="orderBankAmount"></dd>
+                      </div>
+                      <div>
+                        <dt>Reference</dt>
+                        <dd>
+                          <span id="orderBankReference"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderBankReference">Copy</button>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="order-pay-method" id="orderPaypalPay" data-pay="paypal">
+                <button type="button" class="order-pay-method-toggle" aria-expanded="false">
+                  <span class="order-pay-method-copy">
+                    <span class="order-pay-card-title">Pay via PayPal</span>
+                    <span class="order-pay-card-copy">@chaudharikidiary</span>
+                  </span>
+                </button>
+                <div class="order-pay-method-panel">
+                  <div class="order-pay-method-clip">
+                  <div class="order-pay-method-body">
+                    <p class="order-pay-card-copy">Scan with the PayPal app, or open PayPal and add the confirmation code in the note.</p>
+                    <div class="order-pay-qr" id="orderPaypalQr"></div>
+                    <dl class="order-bank-details">
+                      <div>
+                        <dt>Account</dt>
+                        <dd>@chaudharikidiary</dd>
+                      </div>
+                      <div>
+                        <dt>Amount</dt>
+                        <dd id="orderPaypalAmount"></dd>
+                      </div>
+                      <div>
+                        <dt>Note</dt>
+                        <dd>
+                          <span id="orderPaypalNote"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderPaypalNote">Copy</button>
+                        </dd>
+                      </div>
+                    </dl>
+                    <a
+                      class="order-paypal"
+                      id="orderPaypalLink"
+                      href="https://www.paypal.me/chaudharikidiary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open PayPal
+                    </a>
+                  </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <p class="order-alert" role="status">
+              Once the amount is received, we'll ship in 3-5 business days.
+            </p>
+            <button type="button" class="order-submit" id="orderDone">Done</button>
+          </div>
+        </div>
     </div>
   </dialog>
 
+  <script src="../vendor/qrcode.min.js"></script>
   <script src="../script.js"></script>
 </body>
 </html>
