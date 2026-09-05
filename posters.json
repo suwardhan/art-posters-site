@@ -68,5 +68,12 @@
     "image": "images/dangal.jpg",
     "hidden": false,
     "collection": "bollywood"
+  },
+  {
+    "id": "bathroom",
+    "title": "Bathroom",
+    "image": "images/bathroom.jpg",
+    "hidden": false,
+    "collection": "bathroom"
   }
 ]
