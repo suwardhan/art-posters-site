@@ -15,6 +15,11 @@ var SHOP_EMAILS = "chaudharykidiary@gmail.com, suwardhan@gmail.com";
 var REPLY_TO = "chaudharykidiary@gmail.com";
 var FROM_NAME = "ChaudharykiDiary";
 
+// Keep in sync with BANK_* in script.js.
+var BANK_PAYEE_NAME = "Abhishek Chaudhary";
+var BANK_IBAN = "DE11 1001 1001 2594 6138 16";
+var BANK_BIC = "NTSBDEB1XXX";
+
 /** Keep in sync with POSTER_SIZES in script.js */
 var PRICE_BY_SIZE = {
   "5″×7″": 25,
@@ -157,9 +162,23 @@ function sendCustomerEmail_(order) {
       "\n\n" +
       "Please pay €" +
       order.total +
-      " via PayPal to @chaudharikidiary\n" +
-      "https://www.paypal.me/chaudharikidiary\n" +
-      "Include confirmation code " +
+      " so we can ship.\n\n" +
+      (String(BANK_IBAN || "").replace(/\s+/g, "")
+        ? "Bank transfer (SEPA / Girocode):\n" +
+          "Name: " +
+          BANK_PAYEE_NAME +
+          "\n" +
+          "IBAN: " +
+          BANK_IBAN +
+          (BANK_BIC ? "\nBIC: " + BANK_BIC : "") +
+          "\nAmount: €" +
+          order.total +
+          "\nReference: " +
+          order.code +
+          "\n\n"
+        : "") +
+      "PayPal: https://www.paypal.me/chaudharikidiary\n" +
+      "Put " +
       order.code +
       " in the payment note.\n\n" +
       "Once the amount is received, we'll ship in 3-5 business days.\n\n" +
@@ -212,10 +231,12 @@ function sendShopAlert_(order) {
       "\n" +
       order.country +
       "\n\n" +
-      "Awaiting PayPal €" +
+      "Awaiting payment €" +
       order.total +
-      " to @chaudharikidiary.\n" +
+      " (bank transfer or PayPal @chaudharikidiary).\n" +
       "Ship 3-5 business days after payment is received.";
+  });
+}
 
 function getOrdersSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();

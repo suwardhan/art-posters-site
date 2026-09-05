@@ -2,6 +2,178 @@
 const ORDER_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbzzRpEg24-bgleWh7k97SSnkgtiMmIOZrEd5cOA88Xv3v11oHH3QWhi_USdD6LQ8dE-0Q/exec";
 
+const PAYPAL_ME = "chaudharikidiary";
+
+// N26 freelancer SEPA details for Girocode. Keep in sync with apps-script/Code.gs.
+const BANK_DETAILS_DUMMY = false;
+const BANK_PAYEE_NAME = "Abhishek Chaudhary";
+const BANK_IBAN = "DE11 1001 1001 2594 6138 16";
+const BANK_BIC = "NTSBDEB1XXX";
+
+function compactIban(iban) {
+  return String(iban || "").replace(/\s+/g, "").toUpperCase();
+}
+
+function formatIban(iban) {
+  return compactIban(iban).replace(/(.{4})/g, "$1 ").trim();
+}
+
+function bankPayConfigured() {
+  return Boolean(BANK_PAYEE_NAME.trim() && compactIban(BANK_IBAN));
+}
+
+function girocodePayload({ amount, reference }) {
+  const remittance = String(reference || "").slice(0, 140);
+  const euros = Number(amount).toFixed(2);
+  return [
+    "BCD",
+    "002",
+    "1",
+    "SCT",
+    (BANK_BIC || "").replace(/\s+/g, "").toUpperCase(),
+    BANK_PAYEE_NAME.trim().slice(0, 70),
+    compactIban(BANK_IBAN),
+    `EUR${euros}`,
+    "",
+    "",
+    remittance,
+  ].join("\n");
+}
+
+function paypalMeUrl(amount) {
+  return `https://www.paypal.me/${PAYPAL_ME}/${Number(amount).toFixed(2)}`;
+}
+
+function renderQr(container, payload, alt) {
+  if (!container) return;
+  container.replaceChildren();
+  if (typeof qrcode !== "function") return;
+  const utf8 = qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs["UTF-8"];
+  if (utf8) qrcode.stringToBytes = utf8;
+  const qr = qrcode(0, "M");
+  qr.addData(payload);
+  qr.make();
+  container.innerHTML = qr.createSvgTag({
+    scalable: true,
+    margin: 2,
+    alt,
+  });
+}
+
+let pendingPay = null;
+
+function setPayMethodOpen(el, open) {
+  if (open) ensurePayQr(el.dataset.pay);
+  el.classList.toggle("is-open", open);
+  const btn = el.querySelector(".order-pay-method-toggle");
+  if (btn) btn.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function collapsePayMethods() {
+  document.querySelectorAll(".order-pay-method").forEach((el) => {
+    setPayMethodOpen(el, false);
+  });
+}
+
+function setConfirmLayout(on) {
+  document.getElementById("orderLayout")?.classList.toggle("is-confirm", on);
+  const formView = document.getElementById("orderFormView");
+  const faq = document.getElementById("orderFaq");
+  const confirmView = document.getElementById("orderConfirmView");
+  const closeBtn = document.getElementById("orderClose");
+  if (formView) formView.hidden = on;
+  if (faq) faq.hidden = on;
+  if (confirmView) confirmView.hidden = !on;
+  if (closeBtn) closeBtn.hidden = on;
+}
+
+function clearPayOptions() {
+  pendingPay = null;
+  collapsePayMethods();
+  document.getElementById("orderGirocode")?.replaceChildren();
+  document.getElementById("orderPaypalQr")?.replaceChildren();
+  const bank = document.getElementById("orderBankPay");
+  if (bank) bank.hidden = true;
+  document.getElementById("orderPayOptions")?.classList.remove("has-bank");
+  const testNote = document.getElementById("orderPayTestNote");
+  if (testNote) testNote.hidden = true;
+  setConfirmLayout(false);
+}
+
+function ensurePayQr(method) {
+  if (!pendingPay) return;
+  const { total, code } = pendingPay;
+  if (method === "bank") {
+    const el = document.getElementById("orderGirocode");
+    if (el && !el.childElementCount) {
+      renderQr(
+        el,
+        girocodePayload({ amount: total, reference: code }),
+        "SEPA payment QR code"
+      );
+    }
+  }
+  if (method === "paypal") {
+    const el = document.getElementById("orderPaypalQr");
+    if (el && !el.childElementCount) {
+      renderQr(el, paypalMeUrl(total), "PayPal payment QR code");
+    }
+  }
+}
+
+function fillPayOptions({ total, code }) {
+  pendingPay = { total: Number(total), code };
+  const amount = pendingPay.total;
+  const amountLabel = `€${amount.toFixed(2)}`;
+  const showBank = bankPayConfigured();
+
+  collapsePayMethods();
+  document.getElementById("orderGirocode")?.replaceChildren();
+  document.getElementById("orderPaypalQr")?.replaceChildren();
+
+  const testNote = document.getElementById("orderPayTestNote");
+  if (testNote) testNote.hidden = !(BANK_DETAILS_DUMMY && showBank);
+
+  const bank = document.getElementById("orderBankPay");
+  if (bank) {
+    bank.hidden = !showBank;
+    if (showBank) {
+      document.getElementById("orderBankName").textContent = BANK_PAYEE_NAME.trim();
+      const ibanEl = document.getElementById("orderBankIban");
+      ibanEl.textContent = formatIban(BANK_IBAN);
+      ibanEl.dataset.copy = compactIban(BANK_IBAN);
+      const bic = (BANK_BIC || "").replace(/\s+/g, "").toUpperCase();
+      const bicRow = document.getElementById("orderBankBicRow");
+      bicRow.hidden = !bic;
+      if (bic) document.getElementById("orderBankBic").textContent = bic;
+      document.getElementById("orderBankAmount").textContent = amountLabel;
+      document.getElementById("orderBankReference").textContent = code;
+    }
+  }
+
+  const paypal = document.getElementById("orderPaypalLink");
+  if (paypal) paypal.href = paypalMeUrl(amount);
+  const paypalAmount = document.getElementById("orderPaypalAmount");
+  if (paypalAmount) paypalAmount.textContent = amountLabel;
+  const paypalNote = document.getElementById("orderPaypalNote");
+  if (paypalNote) paypalNote.textContent = code;
+}
+
+async function copyOrderText(el, button) {
+  const text = (el.dataset.copy || el.textContent || "").trim();
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    const prev = button.textContent;
+    button.textContent = "Copied";
+    setTimeout(() => {
+      button.textContent = prev;
+    }, 1400);
+  } catch {
+    /* ignore */
+  }
+}
+
 // Keep in sync with apps-script/Code.gs PRICE_BY_SIZE.
 // Tiers: €25 small · €40 medium · €55 large · €75 extra large
 const DEFAULT_SIZE = "11.69″×16.54″";
@@ -560,7 +732,7 @@ function initOrderDialog() {
   selectSize(DEFAULT_SIZE);
   qtyInput.addEventListener("input", updateTotal);
 
-  document.getElementById("orderClose").addEventListener("click", () => dialog.close());
+  document.getElementById("orderClose")?.addEventListener("click", () => dialog.close());
   document.getElementById("orderDone").addEventListener("click", () => dialog.close());
 
   dialog.addEventListener("click", (e) => {
@@ -577,6 +749,25 @@ function initOrderDialog() {
     submitBtn.textContent = "Place order";
     formView.hidden = false;
     confirmView.hidden = true;
+    clearPayOptions();
+  });
+
+  confirmView.addEventListener("click", (e) => {
+    const button = e.target.closest("[data-copy-target]");
+    if (!button) return;
+    const el = document.getElementById(button.dataset.copyTarget);
+    if (el) copyOrderText(el, button);
+  });
+
+  confirmView.querySelectorAll(".order-pay-method-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const el = btn.closest(".order-pay-method");
+      if (!el) return;
+      const willOpen = !el.classList.contains("is-open");
+      confirmView.querySelectorAll(".order-pay-method").forEach((other) => {
+        setPayMethodOpen(other, other === el && willOpen);
+      });
+    });
   });
 
   form.addEventListener("submit", async (e) => {
@@ -630,8 +821,10 @@ function initOrderDialog() {
 
       confirmCode.textContent = data.confirmationCode;
       document.getElementById("orderConfirmTotal").textContent = `€${payload.total}`;
-      formView.hidden = true;
-      confirmView.hidden = false;
+      const qtyLabel = quantity === 1 ? "1 print" : `${quantity} prints`;
+      unitPriceEl.textContent = `${size} · ${qtyLabel} · €${payload.total}`;
+      fillPayOptions({ total: payload.total, code: data.confirmationCode });
+      setConfirmLayout(true);
     } catch (err) {
       errorEl.textContent = "Could not place order. Please try again in a moment.";
       errorEl.hidden = false;
@@ -640,6 +833,23 @@ function initOrderDialog() {
       console.error(err);
     }
   });
+
+  if (new URLSearchParams(location.search).has("previewPay")) {
+    confirmCode.textContent = "20260905-003";
+    document.getElementById("orderConfirmTotal").textContent = "€40";
+    document.getElementById("orderPosterImg").src = "../images/jaane-bhi-do-yaaron.jpg";
+    document.getElementById("orderPosterImg").alt = "Jaane Bhi Do Yaaron";
+    document.getElementById("orderDialogTitle").textContent = "Jaane Bhi Do Yaaron";
+    unitPriceEl.textContent = "11.69″×16.54″ (A3) · 1 print · €40";
+    fillPayOptions({ total: 40, code: "20260905-003" });
+    setConfirmLayout(true);
+    const openPay = new URLSearchParams(location.search).get("openPay");
+    if (openPay === "bank" || openPay === "paypal") {
+      const el = document.querySelector(`.order-pay-method[data-pay="${openPay}"]`);
+      if (el) setPayMethodOpen(el, true);
+    }
+    dialog.showModal();
+  }
 }
 
 function openOrderDialog({ title, image }) {
@@ -663,6 +873,7 @@ function openOrderDialog({ title, image }) {
 
   document.getElementById("orderFormView").hidden = false;
   document.getElementById("orderConfirmView").hidden = true;
+  clearPayOptions();
 
   dialog.showModal();
 }
