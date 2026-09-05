@@ -14,6 +14,6 @@
   "vars": {
     "GITHUB_REPO": "suwardhan/art-posters-site",
     "GITHUB_BRANCH": "main",
-    "ALLOWED_GITHUB_USERS": "suwardhan"
+    "ALLOWED_GITHUB_USERS": "suwardhan,chaudharykidiary"
   }
 }
