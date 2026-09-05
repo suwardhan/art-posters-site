@@ -61,5 +61,12 @@
     "image": "images/dangal.jpg",
     "hidden": false,
     "collection": "bollywood"
+  },
+  {
+    "id": "baadshah",
+    "title": "Baadshah",
+    "image": "images/baadshah.jpg",
+    "hidden": false,
+    "collection": "bollywood"
   }
 ]
