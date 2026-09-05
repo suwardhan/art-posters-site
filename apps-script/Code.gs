@@ -124,117 +124,130 @@ function doGet() {
   return json_({ ok: true, message: "Poster order endpoint is live." });
 }
 
+function bankDetailsBlock_(order) {
+  var iban = String(BANK_IBAN || "").replace(/\s+/g, "");
+  if (!iban) return "";
+  var block =
+    "Bank transfer (SEPA / Girocode):\n" +
+    "Name: " +
+    BANK_PAYEE_NAME +
+    "\n" +
+    "IBAN: " +
+    BANK_IBAN +
+    "\n";
+  if (BANK_BIC) {
+    block += "BIC: " + BANK_BIC + "\n";
+  }
+  block +=
+    "Amount: €" +
+    order.total +
+    "\n" +
+    "Reference: " +
+    order.code +
+    "\n\n";
+  return block;
+}
+
 function sendCustomerEmail_(order) {
   if (!order.email) return;
+  var body =
+    "Hi " +
+    order.name +
+    ",\n\n" +
+    "We received your poster order.\n\n" +
+    "Confirmation: " +
+    order.code +
+    "\n" +
+    "Poster: " +
+    order.poster +
+    "\n" +
+    "Size: " +
+    order.size +
+    "\n" +
+    "Quantity: " +
+    order.quantity +
+    "\n" +
+    "Total: €" +
+    order.total +
+    "\n\n" +
+    "Delivery:\n" +
+    order.street +
+    "\n" +
+    order.postal +
+    " " +
+    order.city +
+    "\n" +
+    order.country +
+    "\n\n" +
+    "Please pay €" +
+    order.total +
+    " so we can ship.\n\n" +
+    bankDetailsBlock_(order) +
+    "PayPal: https://www.paypal.me/chaudharikidiary\n" +
+    "Put " +
+    order.code +
+    " in the payment note.\n\n" +
+    "Once the amount is received, we'll ship in 3-5 business days.\n\n" +
+    "Reply to this message if anything looks wrong.\n\n" +
+    "- " +
+    FROM_NAME;
   MailApp.sendEmail({
     to: order.email,
     replyTo: REPLY_TO,
     name: FROM_NAME,
     subject: "Order " + order.code + " received - " + FROM_NAME,
-    body:
-      "Hi " +
-      order.name +
-      ",\n\n" +
-      "We received your poster order.\n\n" +
-      "Confirmation: " +
-      order.code +
-      "\n" +
-      "Poster: " +
-      order.poster +
-      "\n" +
-      "Size: " +
-      order.size +
-      "\n" +
-      "Quantity: " +
-      order.quantity +
-      "\n" +
-      "Total: €" +
-      order.total +
-      "\n\n" +
-      "Delivery:\n" +
-      order.street +
-      "\n" +
-      order.postal +
-      " " +
-      order.city +
-      "\n" +
-      order.country +
-      "\n\n" +
-      "Please pay €" +
-      order.total +
-      " so we can ship.\n\n" +
-      (String(BANK_IBAN || "").replace(/\s+/g, "")
-        ? "Bank transfer (SEPA / Girocode):\n" +
-          "Name: " +
-          BANK_PAYEE_NAME +
-          "\n" +
-          "IBAN: " +
-          BANK_IBAN +
-          (BANK_BIC ? "\nBIC: " + BANK_BIC : "") +
-          "\nAmount: €" +
-          order.total +
-          "\nReference: " +
-          order.code +
-          "\n\n"
-        : "") +
-      "PayPal: https://www.paypal.me/chaudharikidiary\n" +
-      "Put " +
-      order.code +
-      " in the payment note.\n\n" +
-      "Once the amount is received, we'll ship in 3-5 business days.\n\n" +
-      "Reply to this message if anything looks wrong.\n\n" +
-      "- " +
-      FROM_NAME,
+    body: body
   });
 }
 
 function sendShopAlert_(order) {
+  var body =
+    "New order " +
+    order.code +
+    "\n\n" +
+    "Poster: " +
+    order.poster +
+    "\n" +
+    "Size: " +
+    order.size +
+    "\n" +
+    "Quantity: " +
+    order.quantity +
+    "\n" +
+    "Unit: €" +
+    order.unitPrice +
+    "\n" +
+    "Total: €" +
+    order.total +
+    "\n\n" +
+    "Customer: " +
+    order.name +
+    "\n" +
+    "Email: " +
+    order.email +
+    "\n" +
+    "Phone: " +
+    order.phone +
+    "\n\n" +
+    "Delivery:\n" +
+    order.street +
+    "\n" +
+    order.postal +
+    " " +
+    order.city +
+    "\n" +
+    order.country +
+    "\n\n" +
+    "Awaiting payment €" +
+    order.total +
+    " (bank transfer or PayPal @chaudharikidiary).\n" +
+    "Ship 3-5 business days after payment is received.";
   MailApp.sendEmail({
     to: SHOP_EMAILS,
     replyTo: order.email || REPLY_TO,
     name: FROM_NAME,
     subject: "New poster order " + order.code + " - " + order.poster,
-    body:
-      "New order " +
-      order.code +
-      "\n\n" +
-      "Poster: " +
-      order.poster +
-      "\n" +
-      "Size: " +
-      order.size +
-      "\n" +
-      "Quantity: " +
-      order.quantity +
-      "\n" +
-      "Unit: €" +
-      order.unitPrice +
-      "\n" +
-      "Total: €" +
-      order.total +
-      "\n\n" +
-      "Customer: " +
-      order.name +
-      "\n" +
-      "Email: " +
-      order.email +
-      "\n" +
-      "Phone: " +
-      order.phone +
-      "\n\n" +
-      "Delivery:\n" +
-      order.street +
-      "\n" +
-      order.postal +
-      " " +
-      order.city +
-      "\n" +
-      order.country +
-      "\n\n" +
-      "Awaiting payment €" +
-      order.total +
-      " (bank transfer or PayPal @chaudharikidiary).\n" +
-      "Ship 3-5 business days after payment is received.";
+    body: body
   });
 }
 
