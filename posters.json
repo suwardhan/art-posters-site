@@ -7,16 +7,16 @@
     "collection": "bollywood"
   },
   {
-    "id": "karan-arjun",
-    "title": "Karan arjun",
-    "image": "images/karan-arjun.jpg",
+    "id": "pyaasa",
+    "title": "Pyaasa",
+    "image": "images/pyaasa.png",
     "hidden": false,
     "collection": "bollywood"
   },
   {
-    "id": "pyaasa",
-    "title": "Pyaasa",
-    "image": "images/pyaasa.png",
+    "id": "karan-arjun",
+    "title": "Karan arjun",
+    "image": "images/karan-arjun.jpg",
     "hidden": false,
     "collection": "bollywood"
   },
@@ -56,16 +56,16 @@
     "collection": "bollywood"
   },
   {
-    "id": "dangal",
-    "title": "Dangal",
-    "image": "images/dangal.jpg",
+    "id": "baadshah",
+    "title": "Baadshah",
+    "image": "images/baadshah.jpg",
     "hidden": false,
     "collection": "bollywood"
   },
   {
-    "id": "baadshah",
-    "title": "Baadshah",
-    "image": "images/baadshah.jpg",
+    "id": "dangal",
+    "title": "Dangal",
+    "image": "images/dangal.jpg",
     "hidden": false,
     "collection": "bollywood"
   }
