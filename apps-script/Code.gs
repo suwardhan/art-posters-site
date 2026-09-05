@@ -15,10 +15,10 @@ var SHOP_EMAILS = "chaudharykidiary@gmail.com, suwardhan@gmail.com";
 var REPLY_TO = "chaudharykidiary@gmail.com";
 var FROM_NAME = "ChaudharykiDiary";
 
-// Keep in sync with BANK_* in script.js. Leave IBAN empty to omit bank details from email.
-var BANK_PAYEE_NAME = "";
-var BANK_IBAN = "";
-var BANK_BIC = "";
+// Keep in sync with BANK_* in script.js.
+var BANK_PAYEE_NAME = "Abhishek Chaudhary";
+var BANK_IBAN = "DE11 1001 1001 2594 6138 16";
+var BANK_BIC = "NTSBDEB1XXX";
 
 /** Keep in sync with POSTER_SIZES in script.js */
 var PRICE_BY_SIZE = {

@@ -4,11 +4,10 @@ const ORDER_ENDPOINT =
 
 const PAYPAL_ME = "chaudharikidiary";
 
-// Dummy N26-shaped details for layout on this branch. Replace before merge.
-// Keep in sync with BANK_* in apps-script/Code.gs — leave those empty until the live IBAN.
-const BANK_DETAILS_DUMMY = true;
-const BANK_PAYEE_NAME = "ChaudharykiDiary (TEST)";
-const BANK_IBAN = "DE89 ACCT-000031";
+// N26 freelancer SEPA details for Girocode. Keep in sync with apps-script/Code.gs.
+const BANK_DETAILS_DUMMY = false;
+const BANK_PAYEE_NAME = "Abhishek Chaudhary";
+const BANK_IBAN = "DE11 1001 1001 2594 6138 16";
 const BANK_BIC = "NTSBDEB1XXX";
 
 function compactIban(iban) {
