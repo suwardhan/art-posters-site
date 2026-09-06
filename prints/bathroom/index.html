@@ -48,7 +48,8 @@
     </div>
   </nav>
 
-  <main class="print-page">
+  <main>
+  <div class="print-page">
     <figure class="print-media">
       <img src="/images/bathroom.jpg" alt="Bathroom" />
     </figure>
@@ -62,6 +63,8 @@
         <button type="button" class="btn-share" data-share-title="Bathroom" data-share-url="/prints/bathroom/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
       </div>
     </div>
+  </div>
+  
   </main>
 
   <footer>
@@ -173,7 +176,9 @@
             </div>
             <div class="order-row">
               <label for="orderCountry">Country</label>
-              <input type="text" id="orderCountry" name="country" autocomplete="country-name" required />
+              <select id="orderCountry" name="country" autocomplete="country-name" required>
+                <option value="">Select country</option>
+              </select>
             </div>
           </fieldset>
 
