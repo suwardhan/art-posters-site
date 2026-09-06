@@ -912,10 +912,15 @@ main {
   padding: 0.4rem;
 }
 
-.order-pay-qr svg {
+.order-pay-qr svg,
+.order-pay-qr img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.order-pay-qr--paypal {
+  aspect-ratio: auto;
 }
 
 .order-paypal {

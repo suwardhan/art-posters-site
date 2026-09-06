@@ -19,6 +19,8 @@ var FROM_NAME = "ChaudharykiDiary";
 var BANK_PAYEE_NAME = "Abhishek Chaudhary";
 var BANK_IBAN = "DE11 1001 1001 2594 6138 16";
 var BANK_BIC = "NTSBDEB1XXX";
+var PAYPAL_ME = "AbhishekChaudhary454";
+var PAYPAL_ME_URL = "https://www.paypal.me/" + PAYPAL_ME;
 
 /** Keep in sync with POSTER_SIZES in script.js */
 var PRICE_BY_SIZE = {
@@ -124,6 +126,14 @@ function doGet() {
   return json_({ ok: true, message: "Poster order endpoint is live." });
 }
 
+function escapeHtml_(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function bankDetailsBlock_(order) {
   var iban = String(BANK_IBAN || "").replace(/\s+/g, "");
   if (!iban) return "";
@@ -146,6 +156,91 @@ function bankDetailsBlock_(order) {
     order.code +
     "\n\n";
   return block;
+}
+
+function bankDetailsHtml_(order) {
+  var iban = String(BANK_IBAN || "").replace(/\s+/g, "");
+  if (!iban) return "";
+  var items =
+    "<li>Name: " +
+    escapeHtml_(BANK_PAYEE_NAME) +
+    "</li>" +
+    "<li>IBAN: " +
+    escapeHtml_(BANK_IBAN) +
+    "</li>";
+  if (BANK_BIC) {
+    items += "<li>BIC: " + escapeHtml_(BANK_BIC) + "</li>";
+  }
+  items +=
+    "<li>Amount: €" +
+    escapeHtml_(order.total) +
+    "</li>" +
+    "<li>Reference: " +
+    escapeHtml_(order.code) +
+    "</li>";
+  return (
+    '<h2 style="font-size:16px;margin:1.4em 0 0.4em">Pay directly</h2>' +
+    "<ul>" +
+    items +
+    "</ul>"
+  );
+}
+
+function customerHtmlBody_(order) {
+  return (
+    '<div style="font-family:sans-serif;font-size:15px;line-height:1.45;color:#111">' +
+    "<p>Hi " +
+    escapeHtml_(order.name) +
+    ",</p>" +
+    "<p>We received your poster order.</p>" +
+    '<h2 style="font-size:16px;margin:1.4em 0 0.4em">Order</h2>' +
+    "<ul>" +
+    "<li>Confirmation: " +
+    escapeHtml_(order.code) +
+    "</li>" +
+    "<li>Poster: " +
+    escapeHtml_(order.poster) +
+    "</li>" +
+    "<li>Size: " +
+    escapeHtml_(order.size) +
+    "</li>" +
+    "<li>Quantity: " +
+    escapeHtml_(order.quantity) +
+    "</li>" +
+    "<li>Total: €" +
+    escapeHtml_(order.total) +
+    "</li>" +
+    "</ul>" +
+    '<h2 style="font-size:16px;margin:1.4em 0 0.4em">Delivery</h2>' +
+    "<p>" +
+    escapeHtml_(order.street) +
+    "<br>" +
+    escapeHtml_(order.postal) +
+    " " +
+    escapeHtml_(order.city) +
+    "<br>" +
+    escapeHtml_(order.country) +
+    "</p>" +
+    "<p>Please pay €" +
+    escapeHtml_(order.total) +
+    " so we can ship.</p>" +
+    bankDetailsHtml_(order) +
+    '<h2 style="font-size:16px;margin:1.4em 0 0.4em">PayPal</h2>' +
+    "<p><a href=\"" +
+    PAYPAL_ME_URL +
+    '">' +
+    PAYPAL_ME_URL +
+    "</a></p>" +
+    "<p>Put " +
+    escapeHtml_(order.code) +
+    " in the payment note.</p>" +
+    "<p>Once the amount is received, we'll ship in 3-5 business days.</p>" +
+    "<p>Reply to this message if anything looks wrong.</p>" +
+    "<p>- " +
+    escapeHtml_(FROM_NAME) +
+    "</p>" +
+    "</div>"
+  );
 }
 
 function sendCustomerEmail_(order) {
@@ -183,7 +278,9 @@ function sendCustomerEmail_(order) {
     order.total +
     " so we can ship.\n\n" +
     bankDetailsBlock_(order) +
-    "PayPal: https://www.paypal.me/chaudharikidiary\n" +
+    "PayPal: " +
+    PAYPAL_ME_URL +
+    "\n" +
     "Put " +
     order.code +
     " in the payment note.\n\n" +
@@ -196,7 +293,8 @@ function sendCustomerEmail_(order) {
     replyTo: REPLY_TO,
     name: FROM_NAME,
     subject: "Order " + order.code + " received - " + FROM_NAME,
-    body: body
+    body: body,
+    htmlBody: customerHtmlBody_(order)
   });
 }
 
@@ -240,7 +338,9 @@ function sendShopAlert_(order) {
     "\n\n" +
     "Awaiting payment €" +
     order.total +
-    " (bank transfer or PayPal @chaudharikidiary).\n" +
+    " (bank transfer or PayPal @" +
+    PAYPAL_ME +
+    ").\n" +
     "Ship 3-5 business days after payment is received.";
   MailApp.sendEmail({
     to: SHOP_EMAILS,

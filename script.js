@@ -2,7 +2,7 @@
 const ORDER_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbzzRpEg24-bgleWh7k97SSnkgtiMmIOZrEd5cOA88Xv3v11oHH3QWhi_USdD6LQ8dE-0Q/exec";
 
-const PAYPAL_ME = "chaudharikidiary";
+const PAYPAL_ME = "AbhishekChaudhary454";
 
 // N26 freelancer SEPA details for Girocode. Keep in sync with apps-script/Code.gs.
 const BANK_DETAILS_DUMMY = false;
@@ -91,7 +91,6 @@ function clearPayOptions() {
   pendingPay = null;
   collapsePayMethods();
   document.getElementById("orderGirocode")?.replaceChildren();
-  document.getElementById("orderPaypalQr")?.replaceChildren();
   const bank = document.getElementById("orderBankPay");
   if (bank) bank.hidden = true;
   document.getElementById("orderPayOptions")?.classList.remove("has-bank");
@@ -113,12 +112,6 @@ function ensurePayQr(method) {
       );
     }
   }
-  if (method === "paypal") {
-    const el = document.getElementById("orderPaypalQr");
-    if (el && !el.childElementCount) {
-      renderQr(el, paypalMeUrl(total), "PayPal payment QR code");
-    }
-  }
 }
 
 function fillPayOptions({ total, code }) {
@@ -129,7 +122,6 @@ function fillPayOptions({ total, code }) {
 
   collapsePayMethods();
   document.getElementById("orderGirocode")?.replaceChildren();
-  document.getElementById("orderPaypalQr")?.replaceChildren();
 
   const testNote = document.getElementById("orderPayTestNote");
   if (testNote) testNote.hidden = !(BANK_DETAILS_DUMMY && showBank);
