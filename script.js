@@ -236,22 +236,47 @@ function collectionFromHash() {
   return COLLECTIONS.some((c) => c.id === id) ? id : "bollywood";
 }
 
+function collectionFromPath() {
+  const fromData = document.body?.dataset?.collection;
+  if (fromData && COLLECTIONS.some((c) => c.id === fromData)) return fromData;
+  const match = location.pathname.match(/\/collections\/([^/]+)/);
+  if (match && COLLECTIONS.some((c) => c.id === match[1])) return match[1];
+  return collectionFromHash();
+}
+
+function assetUrl(image) {
+  const value = String(image || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  return value.startsWith("/") ? value : `/${value}`;
+}
+
+function printPath(id) {
+  return `/prints/${id}/`;
+}
+
+function collectionPath(id) {
+  return `/collections/${id}/`;
+}
+
+function absolutePageUrl(path) {
+  return new URL(path, location.origin).href;
+}
+
 function mountCollectionTabs(activeId) {
   const tabsEl = document.getElementById("collectionTabs");
   if (!tabsEl) return;
-  const onGallery = Boolean(document.getElementById("masonry"));
-  const prefix = onGallery ? "#" : "posters/#";
   tabsEl.innerHTML = "";
   COLLECTIONS.forEach((collection) => {
     const tab = document.createElement("a");
-    tab.className = "collection-tab" + (collection.id === activeId ? " is-active" : "");
-    tab.href = prefix + collection.id;
+    const on = collection.id === activeId;
+    tab.className = "collection-tab" + (on ? " is-active" : "");
+    tab.href = collectionPath(collection.id);
     tab.textContent = collection.title;
     tab.dataset.collection = collection.id;
-    if (onGallery) {
-      tab.setAttribute("role", "tab");
-      tab.setAttribute("aria-selected", collection.id === activeId ? "true" : "false");
-    }
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", on ? "true" : "false");
+    if (on) tab.setAttribute("aria-current", "page");
     tabsEl.appendChild(tab);
   });
 }
@@ -292,16 +317,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initOrderDialog();
   initHomePosterSlideshow();
+  initShareButtons();
+  initPrintPage();
 });
 
 const POSTER_BLURB =
   "Limited edition art print. Colour, form, and silence - made to live with you, not just to be looked at.";
 
+function printIdFromPath() {
+  const match = location.pathname.match(/\/prints\/([^/]+)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
 const masonry = document.getElementById("masonry");
 if (masonry) {
   let expandedCard = null;
   let closing = false;
+  let expandToken = 0;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pageTitle = document.title;
 
   const zoom = document.createElement("div");
   zoom.className = "poster-zoom";
@@ -318,7 +352,13 @@ if (masonry) {
       <div class="poster-zoom-copy">
         <h2 id="posterZoomTitle"></h2>
         <p></p>
-        <button type="button" class="btn-buy">Buy Print</button>
+        <div class="poster-zoom-actions">
+          <button type="button" class="btn-buy">Buy Print</button>
+          <button type="button" class="btn-share">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span>Share</span>
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -331,7 +371,29 @@ if (masonry) {
   const zoomBlurb = zoom.querySelector("p");
   const zoomCopy = zoom.querySelector(".poster-zoom-copy");
   const zoomBuy = zoom.querySelector(".btn-buy");
+  const zoomShare = zoom.querySelector(".btn-share");
   const zoomBackdrop = zoom.querySelector(".poster-zoom-backdrop");
+
+  const heroTitle = document.getElementById("collectionHeroTitle");
+  const heroCopy = document.getElementById("collectionHeroCopy");
+  const PLACEHOLDER_COUNT = 8;
+  const PLACEHOLDER_RATIOS = ["3 / 4", "2 / 3", "4 / 5", "3 / 5", "5 / 7", "2 / 3", "3 / 4", "4 / 5"];
+  let allPosters = [];
+  const activeCollection = collectionFromPath();
+
+  function setHero(collection) {
+    if (!heroTitle || !heroCopy) return;
+    if (collection.id === "bollywood") {
+      heroTitle.textContent = "Bollywood, reimagined.";
+      heroCopy.textContent = "Limited edition art prints of classic Indian cinema.";
+    } else {
+      heroTitle.textContent = `${collection.title}.`;
+      heroCopy.textContent = "Limited edition art prints.";
+    }
+  }
+
+  mountCollectionTabs(activeCollection);
+  setHero(collectionById(activeCollection));
 
   function detailsOnLeft(card) {
     const grid = masonry.getBoundingClientRect();
@@ -341,7 +403,29 @@ if (masonry) {
     return mid - grid.left > grid.width * 0.55;
   }
 
-  let expandToken = 0;
+  function cardByPosterId(id) {
+    return masonry.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+  }
+
+  function syncPrintUrl(id) {
+    const url = printPath(id);
+    const state = { zoomPoster: id };
+    if (history.state && history.state.zoomPoster) {
+      history.replaceState(state, "", url);
+    } else {
+      history.pushState(state, "", url);
+    }
+  }
+
+  function restoreCollectionUrl() {
+    if (history.state && history.state.zoomPoster) {
+      history.back();
+      return;
+    }
+    if (printIdFromPath()) {
+      history.replaceState({}, "", collectionPath(activeCollection));
+    }
+  }
 
   function placeZoom(card) {
     const grid = masonry.getBoundingClientRect();
@@ -373,17 +457,24 @@ if (masonry) {
     card.setAttribute("aria-expanded", "false");
     expandedCard = null;
     closing = false;
-    document.body.style.overflow = "";
+    document.title = pageTitle;
+    if (!document.getElementById("orderDialog")?.open) {
+      document.body.style.overflow = "";
+    }
   }
 
-  function collapse() {
+  function collapse({ fromPop } = {}) {
     expandToken += 1;
-    if (!expandedCard || closing) return;
+    if (!expandedCard || closing) {
+      if (!fromPop) restoreCollectionUrl();
+      return;
+    }
     const card = expandedCard;
     const preparing = zoom.classList.contains("is-preparing");
 
     if (reduceMotion || preparing) {
       finishClose(card);
+      if (!fromPop) restoreCollectionUrl();
       return;
     }
 
@@ -401,7 +492,10 @@ if (masonry) {
     const sy = last.height / Math.max(first.height, 1);
     zoomImg.style.transition = "transform 0.4s ease";
     zoomImg.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
-    window.setTimeout(() => finishClose(card), 420);
+    window.setTimeout(() => {
+      finishClose(card);
+      if (!fromPop) restoreCollectionUrl();
+    }, 420);
   }
 
   function playExpand(card, first) {
@@ -438,10 +532,10 @@ if (masonry) {
     });
   }
 
-  function expand(card) {
+  function expand(card, { fromPop } = {}) {
     if (closing) return;
     if (expandedCard === card) {
-      collapse();
+      collapse({ fromPop });
       return;
     }
     if (expandedCard) {
@@ -455,12 +549,16 @@ if (masonry) {
     const first = thumb.getBoundingClientRect();
     const title = card.dataset.title;
     const image = card.dataset.image;
+    const href = printPath(card.dataset.id);
 
     zoomTitle.textContent = title;
     zoomBlurb.textContent = POSTER_BLURB;
     zoomImg.alt = title;
     zoomBuy.dataset.title = title;
     zoomBuy.dataset.image = image;
+    zoomShare.dataset.shareTitle = title;
+    zoomShare.dataset.shareUrl = href;
+    zoomShare.setAttribute("aria-label", `Share ${title}`);
     zoomLayout.classList.toggle("is-details-left", detailsOnLeft(card));
     zoomCopy.style.opacity = "0";
     zoomBackdrop.style.opacity = "0";
@@ -469,6 +567,8 @@ if (masonry) {
     document.body.style.overflow = "hidden";
     card.setAttribute("aria-expanded", "true");
     expandedCard = card;
+    document.title = `${title} art print — ChaudharykiDiary`;
+    if (!fromPop) syncPrintUrl(card.dataset.id);
 
     const start = async () => {
       if (token !== expandToken) return;
@@ -490,45 +590,30 @@ if (masonry) {
     }
   }
 
-  zoomBuy.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openOrderDialog({
-      title: zoomBuy.dataset.title,
-      image: zoomBuy.dataset.image,
-    });
-  });
   zoomCopy.addEventListener("click", (e) => e.stopPropagation());
   zoomMedia.addEventListener("click", () => collapse());
   zoomBackdrop.addEventListener("click", () => collapse());
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") collapse();
+    if (e.key !== "Escape") return;
+    if (document.getElementById("orderDialog")?.open) return;
+    collapse();
   });
 
   window.addEventListener("resize", () => {
     if (expandedCard) collapse();
   });
 
-  const heroTitle = document.getElementById("collectionHeroTitle");
-  const heroCopy = document.getElementById("collectionHeroCopy");
-  const PLACEHOLDER_COUNT = 8;
-  const PLACEHOLDER_RATIOS = ["3 / 4", "2 / 3", "4 / 5", "3 / 5", "5 / 7", "2 / 3", "3 / 4", "4 / 5"];
-  let allPosters = [];
-  let activeCollection = collectionFromHash();
-
-  function setHero(collection) {
-    if (!heroTitle || !heroCopy) return;
-    if (collection.id === "bollywood") {
-      heroTitle.textContent = "Bollywood, reimagined.";
-      heroCopy.textContent = "Limited edition art prints of classic Indian cinema.";
-    } else {
-      heroTitle.textContent = `${collection.title}.`;
-      heroCopy.textContent = "Limited edition art prints.";
+  window.addEventListener("popstate", () => {
+    const id = printIdFromPath();
+    if (!id) {
+      if (expandedCard) collapse({ fromPop: true });
+      return;
     }
-  }
-
-  mountCollectionTabs(activeCollection);
-  setHero(collectionById(activeCollection));
+    const card = cardByPosterId(id);
+    if (card) expand(card, { fromPop: true });
+    else if (expandedCard) collapse({ fromPop: true });
+  });
 
   function appendPlaceholder(index) {
     const card = document.createElement("div");
@@ -542,48 +627,47 @@ if (masonry) {
   }
 
   function appendPoster(p) {
-    const card = document.createElement("div");
+    const card = document.createElement("article");
     card.className = "card";
-    card.setAttribute("role", "button");
-    card.setAttribute("tabindex", "0");
-    card.setAttribute("aria-expanded", "false");
-
-    const imgSrc = p.image.startsWith("images/") ? `../${p.image}` : p.image;
+    const imgSrc = assetUrl(p.image);
+    const href = printPath(p.id);
+    card.dataset.id = p.id;
     card.dataset.title = p.title;
     card.dataset.image = imgSrc;
-
+    card.setAttribute("aria-expanded", "false");
     card.innerHTML = `
-        <img src="${imgSrc}" alt="${escapeHtml(p.title)}" loading="lazy" />
+        <a class="card-hit" href="${escapeAttr(href)}">
+          <img src="${escapeAttr(imgSrc)}" alt="${escapeHtml(p.title)}" loading="lazy" />
+        </a>
         <div class="card-overlay">
           <div class="card-info">
-            <span class="card-title">${escapeHtml(p.title)}</span>
-            <button type="button" class="btn-buy" data-title="${escapeAttr(p.title)}" data-image="${escapeAttr(imgSrc)}">Buy Print</button>
+            <a class="card-title" href="${escapeAttr(href)}">${escapeHtml(p.title)}</a>
+            <div class="card-actions">
+              <button type="button" class="btn-buy" data-title="${escapeAttr(p.title)}" data-image="${escapeAttr(imgSrc)}">Buy Print</button>
+              <button type="button" class="btn-share" data-share-title="${escapeAttr(p.title)}" data-share-url="${escapeAttr(href)}" aria-label="Share ${escapeAttr(p.title)}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                <span>Share</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
 
-    const buyBtn = card.querySelector(".btn-buy");
-    buyBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      openOrderDialog({
-        title: buyBtn.dataset.title,
-        image: buyBtn.dataset.image,
-      });
-    });
-
-    card.addEventListener("click", () => expand(card));
-    card.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        expand(card);
-      }
-    });
-
     masonry.appendChild(card);
   }
 
+  masonry.addEventListener("click", (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (e.target.closest(".btn-buy, .btn-share")) return;
+    const card = e.target.closest(".card:not(.is-placeholder)");
+    if (!card || !card.dataset.id) return;
+    const fromLink = e.target.closest(".card-hit, .card-title");
+    if (fromLink) e.preventDefault();
+    expand(card);
+  });
+
   function renderCollection() {
-    collapse();
+    if (expandedCard) collapse({ fromPop: true });
     const collection = collectionById(activeCollection);
     setHero(collection);
     syncCollectionTabs(activeCollection);
@@ -596,30 +680,71 @@ if (masonry) {
     for (let i = 0; i < placeholders; i++) appendPlaceholder(i);
   }
 
-  function selectCollection(id, updateHash) {
-    const next = collectionById(id).id;
-    if (next === activeCollection && masonry.children.length) {
-      syncCollectionTabs(activeCollection);
-      return;
-    }
-    activeCollection = next;
-    if (updateHash) {
-      history.replaceState(null, "", `#${activeCollection}`);
-    }
-    renderCollection();
-  }
-
-  fetch("../posters.json")
+  fetch("/posters.json")
     .then((res) => res.json())
     .then((data) => {
       allPosters = catalogPosters(data);
-      activeCollection = collectionFromHash();
       renderCollection();
     });
+}
 
-  window.addEventListener("hashchange", () => {
-    selectCollection(collectionFromHash(), false);
-  });
+async function sharePoster(button) {
+  const title = button.dataset.shareTitle || document.title;
+  const path = button.dataset.shareUrl || location.pathname;
+  const url = absolutePageUrl(path);
+  const text = `${title} — art print by Abhishek Chaudhary`;
+  const label = button.querySelector("span");
+  const original = label ? label.textContent : button.textContent;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ title, text, url });
+      return;
+    }
+  } catch (err) {
+    if (err && err.name === "AbortError") return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    if (label) label.textContent = "Copied";
+    else button.textContent = "Copied";
+    window.setTimeout(() => {
+      if (label) label.textContent = original;
+      else button.textContent = original;
+    }, 1600);
+  } catch {
+    window.prompt("Copy this link to share:", url);
+  }
+}
+
+function initShareButtons() {
+  document.addEventListener(
+    "click",
+    (e) => {
+      const share = e.target.closest(".btn-share");
+      if (share) {
+        e.preventDefault();
+        e.stopPropagation();
+        sharePoster(share);
+        return;
+      }
+      const buy = e.target.closest(".btn-buy");
+      if (!buy) return;
+      e.preventDefault();
+      e.stopPropagation();
+      openOrderDialog({
+        title: buy.dataset.title,
+        image: buy.dataset.image,
+      });
+    },
+    true
+  );
+}
+
+function initPrintPage() {
+  if (!document.body?.dataset?.posterId) return;
+  mountCollectionTabs(document.body.dataset.collection || "bollywood");
 }
 
 function escapeHtml(str) {
@@ -638,12 +763,12 @@ function initHomePosterSlideshow() {
   const slides = document.querySelectorAll(".home-tile-slide");
   if (slides.length < 2) return;
 
-  fetch("posters.json")
+  fetch("/posters.json")
     .then((res) => res.json())
     .then((data) => {
       const urls = publishedPosters(catalogPosters(data))
         .filter((p) => (p.collection || "bollywood") === "bollywood")
-        .map((p) => (p.image.startsWith("images/") ? p.image : p.image));
+        .map((p) => assetUrl(p.image));
       if (!urls.length) return;
 
       slides[0].src = urls[0];
@@ -731,7 +856,13 @@ function initOrderDialog() {
     if (e.target === dialog) dialog.close();
   });
 
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && dialog.open) dialog.close();
+  });
+
   dialog.addEventListener("close", () => {
+    const zoomOpen = document.querySelector(".poster-zoom:not([hidden])");
+    if (!zoomOpen) document.body.style.overflow = "";
     form.reset();
     qtyInput.value = "1";
     selectSize(DEFAULT_SIZE);
@@ -829,7 +960,7 @@ function initOrderDialog() {
   if (new URLSearchParams(location.search).has("previewPay")) {
     confirmCode.textContent = "20260905-003";
     document.getElementById("orderConfirmTotal").textContent = "€40";
-    document.getElementById("orderPosterImg").src = "../images/jaane-bhi-do-yaaron.jpg";
+    document.getElementById("orderPosterImg").src = "/images/jaane-bhi-do-yaaron.jpg";
     document.getElementById("orderPosterImg").alt = "Jaane Bhi Do Yaaron";
     document.getElementById("orderDialogTitle").textContent = "Jaane Bhi Do Yaaron";
     unitPriceEl.textContent = "11.69″×16.54″ (A3) · 1 print · €40";
@@ -840,8 +971,13 @@ function initOrderDialog() {
       const el = document.querySelector(`.order-pay-method[data-pay="${openPay}"]`);
       if (el) setPayMethodOpen(el, true);
     }
-    dialog.showModal();
+    openOrderOverlay(dialog);
   }
+}
+
+function openOrderOverlay(dialog) {
+  if (!dialog.open) dialog.show();
+  document.body.style.overflow = "hidden";
 }
 
 function openOrderDialog({ title, image }) {
@@ -867,5 +1003,5 @@ function openOrderDialog({ title, image }) {
   document.getElementById("orderConfirmView").hidden = true;
   clearPayOptions();
 
-  dialog.showModal();
+  openOrderOverlay(dialog);
 }

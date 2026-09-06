@@ -215,6 +215,13 @@ main {
   z-index: 200;
 }
 
+/* Order dialog must sit above the zoom overlay. The zoom uses
+   cursor: zoom-out on a full-viewport backdrop; if it stays on top,
+   the pointer disappears and clicks never reach the form. */
+body:has(.order-dialog[open]) .poster-zoom {
+  pointer-events: none;
+}
+
 .poster-zoom[hidden] {
   display: none;
 }
@@ -250,6 +257,10 @@ main {
 .poster-zoom-layout.is-details-left .poster-zoom-copy {
   text-align: right;
   align-items: flex-end;
+}
+
+.poster-zoom-layout.is-details-left .poster-zoom-actions {
+  justify-content: flex-end;
 }
 
 .poster-zoom-layout.is-details-left .btn-buy {
@@ -301,6 +312,13 @@ main {
   line-height: 1.5;
 }
 
+.poster-zoom-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
 .poster-zoom .btn-buy {
   align-self: flex-start;
   padding: 0.75rem 1.35rem;
@@ -312,6 +330,26 @@ main {
 .poster-zoom .btn-buy:hover {
   opacity: 0.88;
   background: var(--text);
+}
+
+.poster-zoom .btn-share {
+  padding: 0.75rem 1.1rem;
+  font-size: 0.95rem;
+  background: var(--toggle-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.poster-zoom .btn-share:hover {
+  background: var(--toggle-hover);
+}
+
+.poster-zoom .btn-share span {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  overflow: visible;
 }
 
 .card.is-zoomed img,
@@ -326,6 +364,12 @@ main {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.card-hit {
+  display: block;
+  color: inherit;
+  text-decoration: none;
   cursor: zoom-in;
 }
 
@@ -352,6 +396,7 @@ main {
   border-radius: 8px;
   opacity: 0;
   transition: opacity 0.25s;
+  pointer-events: none;
 }
 
 .card:hover .card-overlay {
@@ -367,6 +412,7 @@ main {
   align-items: flex-end;
   justify-content: space-between;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .card-title {
@@ -374,6 +420,14 @@ main {
   font-weight: 600;
   color: #fff;
   line-height: 1.3;
+  text-decoration: none;
+}
+
+.card-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.4rem;
+  pointer-events: auto;
 }
 
 .btn-buy {
@@ -396,33 +450,78 @@ main {
   background: #e0e0e0;
 }
 
-/* ── Order dialog ── */
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.5rem 0.85rem;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.card-overlay .btn-share span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.card-overlay .btn-share {
+  padding: 0.5rem;
+}
+
+/* ── Order dialog ──
+   Use dialog.show() (not showModal()) so this stays in normal stacking,
+   not the browser top layer. Cursor's element picker cannot sit above
+   a top-layer modal. */
 .order-dialog {
   position: fixed;
   inset: 0;
-  margin: auto;
+  z-index: 400;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 1rem;
   border: none;
-  border-radius: 12px;
-  padding: 0;
-  width: min(920px, calc(100vw - 2rem));
-  max-height: calc(100vh - 2rem);
-  background: var(--dialog-bg);
-  color: var(--text);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
-  overflow: auto;
-}
-
-.order-dialog::backdrop {
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.order-dialog[open] {
+  display: grid;
+  place-items: center;
+}
+
+.order-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(920px, 100%);
+  height: calc(100vh - 2rem);
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  background: var(--dialog-bg);
+  color: var(--text);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
 }
 
 .order-close {
-  position: sticky;
-  top: 0.75rem;
-  float: right;
-  z-index: 2;
-  margin: 0.75rem 0.75rem 0 0;
+  flex-shrink: 0;
   width: 36px;
   height: 36px;
   border: none;
@@ -442,28 +541,68 @@ main {
   display: none;
 }
 
-.order-layout {
-  display: grid;
-  grid-template-columns: minmax(200px, 280px) 1fr;
-  grid-template-areas:
-    "preview form"
-    "faq form";
-  gap: 1.75rem;
-  padding: 1.75rem;
-  clear: both;
-  align-items: start;
+.order-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--dialog-bg);
 }
 
-.order-preview {
-  grid-area: preview;
+.order-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.order-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "sidebar form";
+  gap: 1.75rem;
+  padding: 1.25rem 1.75rem 1.75rem;
+}
+
+.order-sidebar {
+  grid-area: sidebar;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding: 0;
+}
+
+.order-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: visible;
 }
 
 .order-form-view {
   grid-area: form;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.3rem;
+}
+
+.order-form-view[hidden],
+.order-confirm-view[hidden] {
+  display: none;
 }
 
 .order-form {
@@ -474,7 +613,6 @@ main {
 }
 
 .order-faq {
-  grid-area: faq;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -492,6 +630,7 @@ main {
   display: block;
   border-radius: 8px;
   background: var(--dialog-surface);
+  border: 1px solid var(--border);
 }
 
 .order-poster-title {
@@ -514,15 +653,24 @@ main {
   gap: 0.75rem;
   padding: 0;
   margin: 0;
+  overflow: visible;
 }
 
 .order-fieldset legend {
+  display: block;
+  width: 100%;
+  padding: 0;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: 0.15rem;
+}
+
+.order-fieldset + .order-fieldset legend {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
 }
 
 .order-row {
@@ -553,6 +701,7 @@ main {
 
 .order-form input {
   width: 100%;
+  margin-block: 3px;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--input-border);
   border-radius: 8px;
@@ -563,8 +712,9 @@ main {
 }
 
 .order-form input:focus {
-  outline: 2px solid var(--text);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--text);
+  box-shadow: 0 0 0 2px var(--dialog-bg), 0 0 0 4px var(--text);
 }
 
 .size-chips {
@@ -703,10 +853,35 @@ main {
   font-weight: 400;
   color: var(--text-muted);
   line-height: 1;
+  transition: transform 0.28s ease;
 }
 
 .order-faq-item[open] summary::after {
-  content: "–";
+  transform: rotate(45deg);
+}
+
+.order-faq-item::details-content {
+  display: block;
+  overflow: hidden;
+  interpolate-size: allow-keywords;
+  height: 0;
+  opacity: 0;
+  transition:
+    height 0.28s ease,
+    opacity 0.22s ease,
+    content-visibility 0.28s allow-discrete;
+}
+
+.order-faq-item[open]::details-content {
+  height: auto;
+  opacity: 1;
+}
+
+@starting-style {
+  .order-faq-item[open]::details-content {
+    height: 0;
+    opacity: 0;
+  }
 }
 
 .order-faq-item p {
@@ -728,14 +903,16 @@ main {
 }
 
 .order-layout.is-confirm {
-  grid-template-areas:
-    "preview confirm"
-    "preview confirm";
+  grid-template-areas: "sidebar confirm";
 }
 
 .order-confirm-view {
   grid-area: confirm;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0;
 }
 
@@ -884,7 +1061,9 @@ main {
 
 @media (prefers-reduced-motion: reduce) {
   .order-pay-method-panel,
-  .order-pay-method-toggle::after {
+  .order-pay-method-toggle::after,
+  .order-faq-item summary::after,
+  .order-faq-item::details-content {
     transition: none;
   }
 }
@@ -1144,6 +1323,101 @@ footer {
   border-top: 1px solid var(--border);
 }
 
+.footer-credit {
+  margin-top: 0.35rem;
+}
+
+.print-page {
+  flex: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.print-page--narrow {
+  grid-template-columns: 1fr;
+  max-width: 40rem;
+}
+
+.print-media {
+  margin: 0;
+}
+
+.print-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.print-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.print-kicker a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.print-kicker a:hover {
+  color: var(--text);
+}
+
+.print-copy h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.print-blurb {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.print-price {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.print-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.print-actions .btn-buy {
+  padding: 0.75rem 1.2rem;
+  font-size: 0.95rem;
+}
+
+.print-actions .btn-share {
+  padding: 0.75rem 1.2rem;
+  font-size: 0.95rem;
+  background: var(--toggle-bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.print-actions .btn-share:hover {
+  background: var(--toggle-hover);
+}
+
+.print-page a {
+  color: inherit;
+}
+
 /* ── Responsive ── */
 @media (max-width: 960px) {
   .navbar:has(.collection-tabs) {
@@ -1206,33 +1480,69 @@ footer {
     min-height: 220px;
   }
 
+  .print-page {
+    grid-template-columns: 1fr;
+    padding: 1.5rem 1rem 3rem;
+  }
+
   .press-cards {
     grid-template-columns: 1fr;
   }
 
+  .order-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .order-panel {
+    height: auto;
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+  }
+
   .order-layout {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "preview"
-      "form"
-      "faq";
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
     padding: 1.25rem;
     gap: 1.25rem;
   }
 
-  .order-layout.is-confirm {
-    grid-template-areas:
-      "preview"
-      "confirm";
+  .order-sidebar {
+    display: contents;
+  }
+
+  .order-preview,
+  .order-form-view,
+  .order-confirm-view,
+  .order-faq {
+    flex: 0 0 auto;
+    min-height: auto;
+    overflow: visible;
+    width: 100%;
   }
 
   .order-preview {
+    order: 1;
     display: grid;
     grid-template-columns: 96px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     align-items: start;
     column-gap: 0.9rem;
     row-gap: 0.15rem;
+    padding: 0;
+  }
+
+  .order-form-view,
+  .order-confirm-view {
+    order: 2;
+  }
+
+  .order-faq {
+    order: 3;
   }
 
   .order-preview img {

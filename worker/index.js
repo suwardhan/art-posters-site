@@ -1,10 +1,5 @@
-const COLLECTIONS = [
-  { id: "bollywood", title: "Bollywood movies" },
-  { id: "furniture", title: "Furniture" },
-  { id: "bathroom", title: "Bathroom" },
-  { id: "abstract", title: "Abstract" },
-  { id: "portraits", title: "Portraits" },
-];
+import { COLLECTIONS, seoFilesFromCatalog } from "../lib/seo-pages.mjs";
+
 const DEFAULT_COLLECTION = "bollywood";
 const SESSION_COOKIE = "ckd_session";
 const STATE_COOKIE = "ckd_oauth_state";
@@ -65,13 +60,14 @@ async function handleApp(request, env, url) {
       return json({ error: "Catalog changed. Refresh and try again." }, 409);
     }
     const posters = sanitizeCatalog(body.posters, normalizeCatalog(current.text));
-    const saved = await putRepoFile(
+    const catalogText = JSON.stringify(posters, null, 2) + "\n";
+    await commitCatalogAndSeo(
       env,
-      "posters.json",
-      JSON.stringify(posters, null, 2) + "\n",
-      current.sha,
+      posters,
+      catalogText,
       `admin: update posters (${session.login})`
     );
+    const saved = await getRepoFile(env, "posters.json");
     return json({ posters, collections: COLLECTIONS, sha: saved.sha });
   }
 
@@ -120,27 +116,18 @@ async function addPoster(request, env, session) {
   const posters = normalizeCatalog(catalogFile.text);
   const id = uniqueId(slugify(title), posters);
   const imagePath = `images/${id}.${ext}`;
+  const next = posters.concat([{ id, title, image: imagePath, hidden: false, collection }]);
+  const catalogText = JSON.stringify(next, null, 2) + "\n";
 
-  await putRepoFile(
+  await commitCatalogAndSeo(
     env,
-    imagePath,
-    imageBytes,
-    null,
-    `admin: add image ${id} (${session.login})`
+    next,
+    catalogText,
+    `admin: add poster ${title} (${session.login})`,
+    [{ path: imagePath, content: imageBytes }]
   );
 
-  const fresh = await getRepoFile(env, "posters.json");
-  const next = normalizeCatalog(fresh.text);
-  next.push({ id, title, image: imagePath, hidden: false, collection });
-
-  const saved = await putRepoFile(
-    env,
-    "posters.json",
-    JSON.stringify(next, null, 2) + "\n",
-    fresh.sha,
-    `admin: add poster ${title} (${session.login})`
-  );
-
+  const saved = await getRepoFile(env, "posters.json");
   return json({ posters: next, collections: COLLECTIONS, sha: saved.sha });
 }
 
@@ -306,6 +293,142 @@ async function putRepoFile(env, path, body, sha, message) {
   }
   const data = await res.json();
   return { sha: data.content.sha };
+}
+
+async function deleteRepoFile(env, path, sha, message) {
+  const { owner, repo } = repoParts(env);
+  const res = await gh(env, `/repos/${owner}/${repo}/contents/${path}`, {
+    method: "DELETE",
+    body: JSON.stringify({
+      message,
+      sha,
+      branch: env.GITHUB_BRANCH,
+    }),
+  });
+  if (!res.ok && res.status !== 404) {
+    const detail = await res.text();
+    throw new Error(`Could not delete ${path}: ${res.status} ${detail}`);
+  }
+}
+
+async function listPrintIds(env) {
+  const { owner, repo } = repoParts(env);
+  const res = await gh(env, `/repos/${owner}/${repo}/contents/prints?ref=${env.GITHUB_BRANCH}`);
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Could not list prints: ${res.status} ${detail}`);
+  }
+  const data = await res.json();
+  if (!Array.isArray(data)) return [];
+  return data.filter((item) => item.type === "dir").map((item) => item.name);
+}
+
+async function commitCatalogAndSeo(env, posters, catalogText, message, extraFiles = []) {
+  const existingPrintIds = await listPrintIds(env);
+  const { upserts, deletions } = seoFilesFromCatalog(posters, { existingPrintIds });
+  const files = [
+    { path: "posters.json", content: catalogText },
+    ...extraFiles,
+    ...upserts,
+    ...deletions.map((path) => ({ path, deleted: true })),
+  ];
+  try {
+    await commitFiles(env, files, message);
+  } catch (err) {
+    console.error("Git tree commit failed, falling back to contents API:", err);
+    await commitFilesViaContents(env, files, message);
+  }
+}
+
+async function commitFiles(env, files, message) {
+  const { owner, repo } = repoParts(env);
+  const branch = env.GITHUB_BRANCH;
+  const refRes = await gh(env, `/repos/${owner}/${repo}/git/ref/heads/${branch}`);
+  if (!refRes.ok) {
+    throw new Error(`Could not read git ref: ${refRes.status} ${await refRes.text()}`);
+  }
+  const ref = await refRes.json();
+  const commitSha = ref.object.sha;
+  const commitRes = await gh(env, `/repos/${owner}/${repo}/git/commits/${commitSha}`);
+  if (!commitRes.ok) {
+    throw new Error(`Could not read git commit: ${commitRes.status} ${await commitRes.text()}`);
+  }
+  const commit = await commitRes.json();
+
+  const treeItems = [];
+  for (const file of files) {
+    if (file.deleted) {
+      treeItems.push({ path: file.path, mode: "100644", type: "blob", sha: null });
+      continue;
+    }
+    const isString = typeof file.content === "string";
+    const blobRes = await gh(env, `/repos/${owner}/${repo}/git/blobs`, {
+      method: "POST",
+      body: JSON.stringify(
+        isString
+          ? { content: file.content, encoding: "utf-8" }
+          : { content: bytesToBase64(file.content), encoding: "base64" }
+      ),
+    });
+    if (!blobRes.ok) {
+      throw new Error(`Could not create blob for ${file.path}: ${blobRes.status} ${await blobRes.text()}`);
+    }
+    const blob = await blobRes.json();
+    treeItems.push({ path: file.path, mode: "100644", type: "blob", sha: blob.sha });
+  }
+
+  const treeRes = await gh(env, `/repos/${owner}/${repo}/git/trees`, {
+    method: "POST",
+    body: JSON.stringify({ base_tree: commit.tree.sha, tree: treeItems }),
+  });
+  if (!treeRes.ok) {
+    throw new Error(`Could not create git tree: ${treeRes.status} ${await treeRes.text()}`);
+  }
+  const tree = await treeRes.json();
+
+  const newCommitRes = await gh(env, `/repos/${owner}/${repo}/git/commits`, {
+    method: "POST",
+    body: JSON.stringify({
+      message,
+      tree: tree.sha,
+      parents: [commitSha],
+    }),
+  });
+  if (!newCommitRes.ok) {
+    throw new Error(`Could not create git commit: ${newCommitRes.status} ${await newCommitRes.text()}`);
+  }
+  const newCommit = await newCommitRes.json();
+
+  const updateRes = await gh(env, `/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
+    method: "PATCH",
+    body: JSON.stringify({ sha: newCommit.sha }),
+  });
+  if (!updateRes.ok) {
+    throw new Error(`Could not update git ref: ${updateRes.status} ${await updateRes.text()}`);
+  }
+}
+
+async function commitFilesViaContents(env, files, message) {
+  for (const file of files) {
+    if (file.deleted) {
+      try {
+        const current = await getRepoFile(env, file.path);
+        await deleteRepoFile(env, file.path, current.sha, message);
+      } catch {
+        /* already absent */
+      }
+      continue;
+    }
+    let sha = null;
+    try {
+      const current = await getRepoFile(env, file.path);
+      sha = current.sha;
+    } catch {
+      sha = null;
+    }
+    await putRepoFile(env, file.path, file.content, sha, message);
+  }
 }
 
 async function gh(env, path, init = {}) {
