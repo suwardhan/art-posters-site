@@ -3,17 +3,50 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ChaudharykiDiary</title>
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <link rel="apple-touch-icon" href="favicon.png" />
+  <title>ChaudharykiDiary — Bollywood art prints by Abhishek Chaudhary</title>
+  <meta name="description" content="Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary." />
+  <link rel="canonical" href="https://chaudharykidiary.com/" />
+  <meta property="og:site_name" content="ChaudharykiDiary" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ChaudharykiDiary — Bollywood art prints by Abhishek Chaudhary" />
+  <meta property="og:description" content="Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary." />
+  <meta property="og:url" content="https://chaudharykidiary.com/" />
+  <meta property="og:image" content="https://chaudharykidiary.com/images/dangal.jpg" />
+  <meta property="og:image:alt" content="Dangal art print by Abhishek Chaudhary" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ChaudharykiDiary — Bollywood art prints by Abhishek Chaudhary" />
+  <meta name="twitter:description" content="Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary." />
+  <meta name="twitter:image" content="https://chaudharykidiary.com/images/dangal.jpg" />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "ChaudharykiDiary",
+        "url": "https://chaudharykidiary.com/",
+        "description": "Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary."
+      },
+      {
+        "@type": "Person",
+        "name": "Abhishek Chaudhary",
+        "url": "https://chaudharykidiary.com/",
+        "sameAs": ["https://www.instagram.com/chaudharykidiary/"]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <nav class="navbar">
-    <a href="./" class="logo"><img class="logo-mark" src="favicon.png" alt="" />ChaudharykiDiary</a>
+    <a href="/" class="logo"><img class="logo-mark" src="/favicon.png" alt="" />ChaudharykiDiary</a>
     <div class="nav-actions">
       <a
         class="theme-toggle"
@@ -43,11 +76,11 @@
 
   <main class="home-main">
     <section class="home-collections" aria-labelledby="collectionsHeading">
-      <p class="home-kicker" id="collectionsHeading">Collections</p>
+      <h2 class="home-kicker" id="collectionsHeading">Collections</h2>
       <div class="masonry home-cards" id="homeCollections">
-      <a class="card home-tile" href="posters/#bollywood">
+      <a class="card home-tile" href="/collections/bollywood/">
         <div class="home-tile-slides">
-          <img class="home-tile-slide is-active" src="images/dangal.jpg" alt="Bollywood movies" />
+          <img class="home-tile-slide is-active" src="/images/dangal.jpg" alt="Bollywood movies" />
           <img class="home-tile-slide" alt="" />
         </div>
         <div class="card-overlay home-tile-overlay">
@@ -56,7 +89,7 @@
           </div>
         </div>
       </a>
-      <a class="card home-tile" href="posters/#furniture">
+      <a class="card home-tile" href="/collections/furniture/">
         <div class="home-tile-placeholder"></div>
         <div class="card-overlay home-tile-overlay">
           <div class="card-info">
@@ -64,7 +97,7 @@
           </div>
         </div>
       </a>
-      <a class="card home-tile" href="posters/#bathroom">
+      <a class="card home-tile" href="/collections/bathroom/">
         <div class="home-tile-placeholder"></div>
         <div class="card-overlay home-tile-overlay">
           <div class="card-info">
@@ -72,7 +105,7 @@
           </div>
         </div>
       </a>
-      <a class="card home-tile" href="posters/#abstract">
+      <a class="card home-tile" href="/collections/abstract/">
         <div class="home-tile-placeholder"></div>
         <div class="card-overlay home-tile-overlay">
           <div class="card-info">
@@ -80,7 +113,7 @@
           </div>
         </div>
       </a>
-      <a class="card home-tile" href="posters/#portraits">
+      <a class="card home-tile" href="/collections/portraits/">
         <div class="home-tile-placeholder"></div>
         <div class="card-overlay home-tile-overlay">
           <div class="card-info">
@@ -92,7 +125,7 @@
     </section>
 
     <section class="home-press" aria-labelledby="pressHeading">
-      <p class="home-kicker" id="pressHeading">Press</p>
+      <h2 class="home-kicker" id="pressHeading">Press</h2>
       <div class="press-cards">
         <a
           class="press-card"
@@ -127,8 +160,9 @@
 
   <footer>
     <p>&copy; 2026 ChaudharykiDiary</p>
+    <p class="footer-credit">Art prints by Abhishek Chaudhary</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="/script.js"></script>
 </body>
 </html>

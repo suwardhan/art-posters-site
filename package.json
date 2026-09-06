@@ -2,7 +2,8 @@
   "name": "art-posters-site",
   "private": true,
   "scripts": {
-    "dev:admin": "wrangler dev"
+    "dev:admin": "wrangler dev",
+    "generate:seo": "node scripts/generate-seo.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.86.0"
