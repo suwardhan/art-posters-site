@@ -1,15 +1,15 @@
 [
   {
-    "id": "jaane-bhi-do-yaaron",
-    "title": "Jaane Bhi Do Yaaron",
-    "image": "images/jaane-bhi-do-yaaron.jpg",
+    "id": "pyaasa",
+    "title": "Pyaasa",
+    "image": "images/pyaasa.png",
     "hidden": false,
     "collection": "bollywood"
   },
   {
-    "id": "pyaasa",
-    "title": "Pyaasa",
-    "image": "images/pyaasa.png",
+    "id": "jaane-bhi-do-yaaron",
+    "title": "Jaane Bhi Do Yaaron",
+    "image": "images/jaane-bhi-do-yaaron.jpg",
     "hidden": false,
     "collection": "bollywood"
   },
