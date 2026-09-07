@@ -73,7 +73,7 @@
     "id": "bathroom",
     "title": "Bathroom",
     "image": "images/bathroom.jpg",
-    "hidden": false,
+    "hidden": true,
     "collection": "bathroom"
   },
   {
