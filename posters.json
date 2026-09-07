@@ -82,5 +82,12 @@
     "image": "images/piku.jpg",
     "hidden": false,
     "collection": "bollywood"
+  },
+  {
+    "id": "chashme-buddoor",
+    "title": "Chashme Buddoor",
+    "image": "images/chashme-buddoor.jpg",
+    "hidden": false,
+    "collection": "bollywood"
   }
 ]
