@@ -75,5 +75,12 @@
     "image": "images/bathroom.jpg",
     "hidden": false,
     "collection": "bathroom"
+  },
+  {
+    "id": "piku",
+    "title": "Piku",
+    "image": "images/piku.jpg",
+    "hidden": false,
+    "collection": "bollywood"
   }
 ]
