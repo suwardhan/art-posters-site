@@ -11,12 +11,12 @@
   <meta property="og:title" content="ChaudharykiDiary — Bollywood art prints by Abhishek Chaudhary" />
   <meta property="og:description" content="Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary." />
   <meta property="og:url" content="https://chaudharykidiary.com/" />
-  <meta property="og:image" content="https://chaudharykidiary.com/images/dangal.jpg" />
-  <meta property="og:image:alt" content="Dangal art print by Abhishek Chaudhary" />
+  <meta property="og:image" content="https://chaudharykidiary.com/images/pyaasa.png" />
+  <meta property="og:image:alt" content="Pyaasa" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ChaudharykiDiary — Bollywood art prints by Abhishek Chaudhary" />
   <meta name="twitter:description" content="Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary." />
-  <meta name="twitter:image" content="https://chaudharykidiary.com/images/dangal.jpg" />
+  <meta name="twitter:image" content="https://chaudharykidiary.com/images/pyaasa.png" />
   <link rel="icon" href="/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,30 +24,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");</script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "name": "ChaudharykiDiary",
-        "url": "https://chaudharykidiary.com/",
-        "description": "Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary."
-      },
-      {
-        "@type": "Person",
-        "name": "Abhishek Chaudhary",
-        "url": "https://chaudharykidiary.com/",
-        "sameAs": ["https://www.instagram.com/chaudharykidiary/"]
-      }
-    ]
-  }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"ChaudharykiDiary","url":"https://chaudharykidiary.com/","description":"Limited edition art prints by Abhishek Chaudhary — Bollywood movie posters and original works from ChaudharykiDiary."},{"@type":"Person","name":"Abhishek Chaudhary","url":"https://chaudharykidiary.com/","sameAs":["https://www.instagram.com/chaudharykidiary/"]}]}</script>
 </head>
-<body>
+<body data-gallery="all">
   <nav class="navbar">
     <a href="/" class="logo"><img class="logo-mark" src="/favicon.png" alt="" />ChaudharykiDiary</a>
     <div class="nav-actions">
+      <div class="site-nav" id="siteNav" aria-label="Site"><a class="site-nav-link" href="/posters/">Prints</a><a class="site-nav-link" href="/about/">About me</a></div>
+      <span class="nav-divider" aria-hidden="true"></span>
       <a
         class="theme-toggle"
         href="https://www.instagram.com/chaudharykidiary/"
@@ -61,6 +45,10 @@
         <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
+      <button class="theme-toggle nav-menu-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">
+        <svg class="icon-menu" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+      </button>
     </div>
   </nav>
 
@@ -69,103 +57,429 @@
       <h1>Art is a way of paying attention.</h1>
       <p>Colour, form, and silence - made to live with you, not just to be looked at.</p>
     </div>
-    <div class="home-hero-photo" aria-hidden="true">
-      <span>Image coming soon</span>
-    </div>
   </section>
 
-  <main class="home-main">
-    <section class="home-collections" aria-labelledby="collectionsHeading">
-      <h2 class="home-kicker" id="collectionsHeading">Collections</h2>
-      <div class="masonry home-cards" id="homeCollections">
-      <a class="card home-tile" href="/collections/bollywood/">
-        <div class="home-tile-slides">
-          <img class="home-tile-slide is-active" src="/images/dangal.jpg" alt="Bollywood movies" />
-          <img class="home-tile-slide" alt="" />
-        </div>
-        <div class="card-overlay home-tile-overlay">
-          <div class="card-info">
-            <span class="card-title">Bollywood movies</span>
-          </div>
-        </div>
-      </a>
-      <a class="card home-tile" href="/collections/furniture/">
-        <div class="home-tile-placeholder"></div>
-        <div class="card-overlay home-tile-overlay">
-          <div class="card-info">
-            <span class="card-title">Furniture</span>
-          </div>
-        </div>
-      </a>
-      <a class="card home-tile" href="/collections/bathroom/">
-        <div class="home-tile-placeholder"></div>
-        <div class="card-overlay home-tile-overlay">
-          <div class="card-info">
-            <span class="card-title">Bathroom</span>
-          </div>
-        </div>
-      </a>
-      <a class="card home-tile" href="/collections/abstract/">
-        <div class="home-tile-placeholder"></div>
-        <div class="card-overlay home-tile-overlay">
-          <div class="card-info">
-            <span class="card-title">Abstract</span>
-          </div>
-        </div>
-      </a>
-      <a class="card home-tile" href="/collections/portraits/">
-        <div class="home-tile-placeholder"></div>
-        <div class="card-overlay home-tile-overlay">
-          <div class="card-info">
-            <span class="card-title">Portraits</span>
-          </div>
-        </div>
-      </a>
+  <main>
+    <div id="masonry" class="masonry">
+      <article class="card" data-id="pyaasa" data-title="Pyaasa" data-image="/images/pyaasa.png" aria-expanded="false">
+  <a class="card-hit" href="/prints/pyaasa/">
+    <img src="/images/pyaasa.png" alt="Pyaasa" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/pyaasa/">Pyaasa</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Pyaasa" data-image="/images/pyaasa.png">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Pyaasa" data-share-url="/prints/pyaasa/" aria-label="Share Pyaasa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
       </div>
-    </section>
-
-    <section class="home-press" aria-labelledby="pressHeading">
-      <h2 class="home-kicker" id="pressHeading">Press</h2>
-      <div class="press-cards">
-        <a
-          class="press-card"
-          href="https://www.thehindu.com/entertainment/movies/how-designer-abhishek-chaudhary-is-adding-a-quirky-punch-to-bollywood-movie-posters/article71391746.ece"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="press-source">The Hindu</span>
-          <span class="press-title">How designer Abhishek Chaudhary is adding a quirky punch to Bollywood movie posters</span>
-          <img class="press-logo press-logo--hindu" src="/images/press/the-hindu.png" alt="" aria-hidden="true" />
-        </a>
-        <a
-          class="press-card"
-          href="https://homegrown.co.in/homegrown-creators/abhishek-chaudharys-movie-posters-feel-like-inside-jokes-for-cinephiles"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="press-source">Homegrown</span>
-          <span class="press-title">Abhishek Chaudhary's movie posters feel like inside jokes for cinephiles</span>
-          <img class="press-logo press-logo--homegrown" src="/images/press/homegrown.png" alt="" aria-hidden="true" />
-        </a>
-        <a
-          class="press-card"
-          href="https://www.socialketchup.in/creators/abhishek-chaudhary-art-12483702"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span class="press-source">Social Ketchup</span>
-          <span class="press-title">In art, the subject matters less to Abhishek Chaudhary than the curiosity it sparks</span>
-          <img class="press-logo press-logo--ketchup" src="/images/press/social-ketchup.png" alt="" aria-hidden="true" />
-        </a>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="jaane-bhi-do-yaaron" data-title="Jaane Bhi Do Yaaron" data-image="/images/jaane-bhi-do-yaaron.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/jaane-bhi-do-yaaron/">
+    <img src="/images/jaane-bhi-do-yaaron.jpg" alt="Jaane Bhi Do Yaaron" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/jaane-bhi-do-yaaron/">Jaane Bhi Do Yaaron</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Jaane Bhi Do Yaaron" data-image="/images/jaane-bhi-do-yaaron.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Jaane Bhi Do Yaaron" data-share-url="/prints/jaane-bhi-do-yaaron/" aria-label="Share Jaane Bhi Do Yaaron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
       </div>
-    </section>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="karan-arjun" data-title="Karan arjun" data-image="/images/karan-arjun.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/karan-arjun/">
+    <img src="/images/karan-arjun.jpg" alt="Karan arjun" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/karan-arjun/">Karan arjun</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Karan arjun" data-image="/images/karan-arjun.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Karan arjun" data-share-url="/prints/karan-arjun/" aria-label="Share Karan arjun"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="baazigar" data-title="Baazigar" data-image="/images/baazigar.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/baazigar/">
+    <img src="/images/baazigar.jpg" alt="Baazigar" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/baazigar/">Baazigar</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Baazigar" data-image="/images/baazigar.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Baazigar" data-share-url="/prints/baazigar/" aria-label="Share Baazigar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="khoon-bhari-mang" data-title="Khoon Bhari Mang" data-image="/images/khoon-bhari-mang.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/khoon-bhari-mang/">
+    <img src="/images/khoon-bhari-mang.jpg" alt="Khoon Bhari Mang" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/khoon-bhari-mang/">Khoon Bhari Mang</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Khoon Bhari Mang" data-image="/images/khoon-bhari-mang.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Khoon Bhari Mang" data-share-url="/prints/khoon-bhari-mang/" aria-label="Share Khoon Bhari Mang"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="mr-india" data-title="Mr India" data-image="/images/mr-india.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/mr-india/">
+    <img src="/images/mr-india.jpg" alt="Mr India" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/mr-india/">Mr India</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Mr India" data-image="/images/mr-india.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Mr India" data-share-url="/prints/mr-india/" aria-label="Share Mr India"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="shaan" data-title="Shaan" data-image="/images/shaan.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/shaan/">
+    <img src="/images/shaan.jpg" alt="Shaan" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/shaan/">Shaan</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Shaan" data-image="/images/shaan.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Shaan" data-share-url="/prints/shaan/" aria-label="Share Shaan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="znmd" data-title="ZNMD" data-image="/images/znmd.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/znmd/">
+    <img src="/images/znmd.jpg" alt="ZNMD" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/znmd/">ZNMD</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="ZNMD" data-image="/images/znmd.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="ZNMD" data-share-url="/prints/znmd/" aria-label="Share ZNMD"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="baadshah" data-title="Baadshah" data-image="/images/baadshah.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/baadshah/">
+    <img src="/images/baadshah.jpg" alt="Baadshah" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/baadshah/">Baadshah</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Baadshah" data-image="/images/baadshah.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Baadshah" data-share-url="/prints/baadshah/" aria-label="Share Baadshah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="dangal" data-title="Dangal" data-image="/images/dangal.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/dangal/">
+    <img src="/images/dangal.jpg" alt="Dangal" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/dangal/">Dangal</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Dangal" data-image="/images/dangal.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Dangal" data-share-url="/prints/dangal/" aria-label="Share Dangal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="piku" data-title="Piku" data-image="/images/piku.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/piku/">
+    <img src="/images/piku.jpg" alt="Piku" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/piku/">Piku</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Piku" data-image="/images/piku.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Piku" data-share-url="/prints/piku/" aria-label="Share Piku"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+      <article class="card" data-id="chashme-buddoor" data-title="Chashme Buddoor" data-image="/images/chashme-buddoor.jpg" aria-expanded="false">
+  <a class="card-hit" href="/prints/chashme-buddoor/">
+    <img src="/images/chashme-buddoor.jpg" alt="Chashme Buddoor" loading="lazy" />
+  </a>
+  <div class="card-overlay">
+    <div class="card-info">
+      <a class="card-title" href="/prints/chashme-buddoor/">Chashme Buddoor</a>
+      <div class="card-actions">
+        <button type="button" class="btn-buy" data-title="Chashme Buddoor" data-image="/images/chashme-buddoor.jpg">Buy Print</button>
+        <button type="button" class="btn-share" data-share-title="Chashme Buddoor" data-share-url="/prints/chashme-buddoor/" aria-label="Share Chashme Buddoor"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
+      </div>
+    </div>
+  </div>
+</article>
+    </div>
   </main>
 
   <footer>
     <p>&copy; 2026 ChaudharykiDiary</p>
     <p class="footer-credit">Art prints by Abhishek Chaudhary</p>
   </footer>
+  <dialog id="orderDialog" class="order-dialog" aria-modal="true" aria-labelledby="orderHeading">
+    <div class="order-panel">
+    <header class="order-header">
+      <h2 id="orderHeading">Place an order</h2>
+      <button type="button" class="order-close" id="orderClose" aria-label="Close">&times;</button>
+    </header>
 
+    <div class="order-layout" id="orderLayout">
+        <div class="order-sidebar">
+        <aside class="order-preview">
+          <img id="orderPosterImg" src="" alt="" />
+          <h2 id="orderDialogTitle" class="order-poster-title"></h2>
+          <p class="order-unit-price" id="orderUnitPrice">€40 per print</p>
+        </aside>
+
+        <section class="order-faq" id="orderFaq" aria-label="Order FAQ">
+          <h3 class="order-faq-heading">Questions before you order</h3>
+          <details class="order-faq-item">
+            <summary>How do I pay?</summary>
+            <p>
+              Place the order first, then pay directly by SEPA bank transfer or via PayPal
+              (<a href="https://www.paypal.me/AbhishekChaudhary454" target="_blank" rel="noopener noreferrer">@AbhishekChaudhary454</a>).
+              Put your confirmation code in the transfer reference or PayPal note so we can match it.
+            </p>
+          </details>
+          <details class="order-faq-item">
+            <summary>When will it ship?</summary>
+            <p>
+              After we receive your payment, we ship in 3–5 business days.
+              You'll get a confirmation email when the order is placed.
+            </p>
+          </details>
+          <details class="order-faq-item">
+            <summary>Can I order more than one size?</summary>
+            <p>
+              Each order is for one poster and one size. To get another size
+              (or a different poster), place a separate order.
+            </p>
+          </details>
+          <details class="order-faq-item">
+            <summary>Need help?</summary>
+            <p>
+              Reply to your confirmation email, or write to
+              <a href="mailto:chaudharykidiary@gmail.com">chaudharykidiary@gmail.com</a>.
+            </p>
+          </details>
+        </section>
+        </div>
+
+        <div class="order-form-view" id="orderFormView">
+        <form id="orderForm" class="order-form" novalidate>
+          <input type="hidden" id="orderPosterTitle" name="poster" />
+
+          <fieldset class="order-fieldset">
+            <legend>Print</legend>
+            <div class="order-row">
+              <span class="order-size-heading" id="orderSizeLabel">Size</span>
+              <div
+                class="size-chips"
+                id="orderSizeChips"
+                role="radiogroup"
+                aria-labelledby="orderSizeLabel"
+              ></div>
+              <input type="hidden" id="orderSize" name="size" required />
+            </div>
+            <div class="order-row">
+              <label for="orderQty">Quantity</label>
+              <input type="number" id="orderQty" name="quantity" min="1" max="20" value="1" required />
+            </div>
+          </fieldset>
+
+          <fieldset class="order-fieldset">
+            <legend>Contact</legend>
+            <div class="order-row">
+              <label for="orderName">Full name</label>
+              <input type="text" id="orderName" name="name" autocomplete="name" required />
+            </div>
+            <div class="order-row">
+              <label for="orderEmail">Email</label>
+              <input type="email" id="orderEmail" name="email" autocomplete="email" required />
+            </div>
+            <div class="order-row">
+              <label for="orderPhone">Phone</label>
+              <input type="tel" id="orderPhone" name="phone" autocomplete="tel" required />
+            </div>
+          </fieldset>
+
+          <fieldset class="order-fieldset">
+            <legend>Delivery</legend>
+            <div class="order-row">
+              <label for="orderStreet">Street address</label>
+              <input type="text" id="orderStreet" name="street" autocomplete="street-address" required />
+            </div>
+            <div class="order-row order-row-split">
+              <div>
+                <label for="orderCity">City</label>
+                <input type="text" id="orderCity" name="city" autocomplete="address-level2" required />
+              </div>
+              <div>
+                <label for="orderPostal">Postal code</label>
+                <input type="text" id="orderPostal" name="postal" autocomplete="postal-code" required />
+              </div>
+            </div>
+            <div class="order-row">
+              <label for="orderCountry">Country</label>
+              <select id="orderCountry" name="country" autocomplete="country-name" required>
+                <option value="">Select country</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <div class="order-total-bar">
+            <span>Total</span>
+            <strong id="orderTotal">€40</strong>
+          </div>
+
+          <p class="order-error" id="orderError" hidden></p>
+
+          <button type="submit" class="order-submit" id="orderSubmit">Place order</button>
+          <p class="order-note">You'll get a confirmation email. Pay by bank transfer or PayPal to complete the order.</p>
+        </form>
+        </div>
+
+        <div class="order-confirm-view" id="orderConfirmView" hidden>
+          <div class="order-confirm">
+            <div class="order-confirm-header">
+              <p class="order-confirm-label">Order received</p>
+              <h2 class="order-confirm-code" id="orderConfirmCode"></h2>
+              <p class="order-confirm-copy">A confirmation email is on its way.</p>
+            </div>
+
+            <div class="order-confirm-pay">
+              <p class="order-confirm-label">Payment pending</p>
+              <p class="order-confirm-copy">
+                Pay <strong id="orderConfirmTotal">€0</strong> with one of the options below.
+                Put your confirmation code in the payment reference so we can match it.
+              </p>
+            </div>
+
+            <div class="order-pay-methods" id="orderPayOptions">
+              <section class="order-pay-method" id="orderBankPay" data-pay="bank" hidden>
+                <button type="button" class="order-pay-method-toggle" aria-expanded="false">
+                  <span class="order-pay-method-copy">
+                    <span class="order-pay-card-title">Pay directly</span>
+                    <span class="order-pay-card-copy">SEPA bank transfer</span>
+                  </span>
+                </button>
+                <div class="order-pay-method-panel">
+                  <div class="order-pay-method-clip">
+                  <div class="order-pay-method-body">
+                    <p class="order-pay-test" id="orderPayTestNote" hidden>
+                      Sample bank details for layout — do not send money here.
+                    </p>
+                    <p class="order-pay-card-copy">Scan with your banking app, or copy the details.</p>
+                    <div class="order-pay-qr" id="orderGirocode"></div>
+                    <dl class="order-bank-details">
+                      <div>
+                        <dt>Name</dt>
+                        <dd id="orderBankName"></dd>
+                      </div>
+                      <div>
+                        <dt>IBAN</dt>
+                        <dd>
+                          <span id="orderBankIban"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderBankIban">Copy</button>
+                        </dd>
+                      </div>
+                      <div id="orderBankBicRow" hidden>
+                        <dt>BIC</dt>
+                        <dd id="orderBankBic"></dd>
+                      </div>
+                      <div>
+                        <dt>Amount</dt>
+                        <dd id="orderBankAmount"></dd>
+                      </div>
+                      <div>
+                        <dt>Reference</dt>
+                        <dd>
+                          <span id="orderBankReference"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderBankReference">Copy</button>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="order-pay-method" id="orderPaypalPay" data-pay="paypal">
+                <button type="button" class="order-pay-method-toggle" aria-expanded="false">
+                  <span class="order-pay-method-copy">
+                    <span class="order-pay-card-title">Pay via PayPal</span>
+                    <span class="order-pay-card-copy">@AbhishekChaudhary454</span>
+                  </span>
+                </button>
+                <div class="order-pay-method-panel">
+                  <div class="order-pay-method-clip">
+                  <div class="order-pay-method-body">
+                    <p class="order-pay-card-copy">Scan with the PayPal app, or open PayPal and add the confirmation code in the note.</p>
+                    <div class="order-pay-qr order-pay-qr--paypal">
+                      <img src="/images/paypal-qr.png" alt="PayPal payment QR code" width="338" height="342">
+                    </div>
+                    <dl class="order-bank-details">
+                      <div>
+                        <dt>Account</dt>
+                        <dd>@AbhishekChaudhary454</dd>
+                      </div>
+                      <div>
+                        <dt>Amount</dt>
+                        <dd id="orderPaypalAmount"></dd>
+                      </div>
+                      <div>
+                        <dt>Note</dt>
+                        <dd>
+                          <span id="orderPaypalNote"></span>
+                          <button type="button" class="order-copy" data-copy-target="orderPaypalNote">Copy</button>
+                        </dd>
+                      </div>
+                    </dl>
+                    <a
+                      class="order-paypal"
+                      id="orderPaypalLink"
+                      href="https://www.paypal.me/AbhishekChaudhary454"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open PayPal
+                    </a>
+                  </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <p class="order-alert" role="status">
+              Once the amount is received, we'll ship in 3-5 business days.
+            </p>
+            <button type="button" class="order-submit" id="orderDone">Done</button>
+          </div>
+        </div>
+    </div>
+    </div>
+  </dialog>
+  <script src="/vendor/qrcode.min.js"></script>
   <script src="/script.js"></script>
 </body>
 </html>
