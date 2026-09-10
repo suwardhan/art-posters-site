@@ -1301,9 +1301,9 @@ body[data-gallery="home"] .poster-zoom .btn-share:hover {
 .press-card {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0 0 4.15rem;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -1318,18 +1318,22 @@ body[data-gallery="home"] .poster-zoom .btn-share:hover {
 
 .press-thumb {
   display: block;
-  width: 100%;
+  width: 9rem;
+  flex-shrink: 0;
   aspect-ratio: 819 / 1024;
   object-fit: cover;
   object-position: center top;
 }
 
-.press-thumb--wide {
-  object-position: center 30%;
+.press-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.9rem 1rem 0.85rem 0.95rem;
 }
 
 .press-source {
-  padding: 0 1.25rem;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1338,20 +1342,18 @@ body[data-gallery="home"] .poster-zoom .btn-share:hover {
 }
 
 .press-title {
-  padding: 0 1.25rem;
-  margin-bottom: 0.35rem;
   font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.35;
+  overflow-wrap: break-word;
 }
 
 .press-logo {
-  position: absolute;
-  left: 1.25rem;
-  bottom: 1.1rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
   width: auto;
-  max-width: 58%;
+  max-width: 70%;
   object-fit: contain;
   object-position: left center;
   pointer-events: none;
@@ -1362,7 +1364,7 @@ body[data-gallery="home"] .poster-zoom .btn-share:hover {
 }
 
 .press-logo--homegrown {
-  height: 2.4rem;
+  height: 1.7rem;
   filter: invert(1);
 }
 
@@ -1601,6 +1603,10 @@ main:has(.print-page) {
 
   .press-cards {
     grid-template-columns: 1fr;
+  }
+
+  .press-thumb {
+    width: 6.75rem;
   }
 
   .order-header {
