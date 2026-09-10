@@ -184,7 +184,7 @@ main {
 }
 
 .masonry {
-  columns: 3;
+  columns: 4;
   column-gap: 1rem;
 }
 
@@ -1512,6 +1512,12 @@ main:has(.print-page) {
 }
 
 /* ── Responsive ── */
+@media (max-width: 1200px) {
+  .masonry {
+    columns: 3;
+  }
+}
+
 @media (max-width: 960px) {
   .navbar {
     padding: 0.7rem 1rem;
