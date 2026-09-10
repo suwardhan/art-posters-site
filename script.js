@@ -237,6 +237,10 @@ function publishedPosters(posters) {
   return (posters || []).filter((p) => p && p.hidden !== true);
 }
 
+function shopEnabled(poster) {
+  return Boolean(poster) && poster.shop !== false;
+}
+
 function catalogPosters(data) {
   if (Array.isArray(data)) return data;
   return Array.isArray(data?.posters) ? data.posters : [];
@@ -400,14 +404,16 @@ if (masonry) {
   const PLACEHOLDER_RATIOS = ["3 / 4", "2 / 3", "4 / 5", "3 / 5", "5 / 7", "2 / 3", "3 / 4", "4 / 5"];
   let allPosters = [];
   const activeCollection = collectionFromPath();
-  const showAllGallery = document.body?.dataset?.gallery === "all";
+  const onHomeGallery = document.body?.dataset?.gallery === "home";
+  const onShopGallery = document.body?.dataset?.gallery === "shop";
+  const showAllGallery = onHomeGallery || onShopGallery;
   const galleryReturnPath = onPrintPage
     ? printPath(document.body.dataset.posterId)
-    : showAllGallery
-      ? location.pathname.startsWith("/posters")
-        ? postersPath()
-        : "/"
-      : collectionPath(activeCollection);
+    : onShopGallery
+      ? postersPath()
+      : onHomeGallery
+        ? "/"
+        : collectionPath(activeCollection);
 
   function setHero(collection) {
     if (showAllGallery || !heroTitle || !heroCopy) return;
@@ -584,6 +590,7 @@ if (masonry) {
     zoomImg.alt = title;
     zoomBuy.dataset.title = title;
     zoomBuy.dataset.image = image;
+    zoomBuy.hidden = onHomeGallery || card.dataset.shop === "false";
     zoomShare.dataset.shareTitle = title;
     zoomShare.dataset.shareUrl = href;
     zoomShare.setAttribute("aria-label", `Share ${title}`);
@@ -659,10 +666,15 @@ if (masonry) {
     card.className = "card";
     const imgSrc = assetUrl(p.image);
     const href = printPath(p.id);
+    const canBuy = !onHomeGallery && shopEnabled(p);
     card.dataset.id = p.id;
     card.dataset.title = p.title;
     card.dataset.image = imgSrc;
+    card.dataset.shop = shopEnabled(p) ? "true" : "false";
     card.setAttribute("aria-expanded", "false");
+    const buyBtn = canBuy
+      ? `<button type="button" class="btn-buy" data-title="${escapeAttr(p.title)}" data-image="${escapeAttr(imgSrc)}">Buy Print</button>`
+      : "";
     card.innerHTML = `
         <a class="card-hit" href="${escapeAttr(href)}">
           <img src="${escapeAttr(imgSrc)}" alt="${escapeHtml(p.title)}" loading="lazy" />
@@ -671,7 +683,7 @@ if (masonry) {
           <div class="card-info">
             <a class="card-title" href="${escapeAttr(href)}">${escapeHtml(p.title)}</a>
             <div class="card-actions">
-              <button type="button" class="btn-buy" data-title="${escapeAttr(p.title)}" data-image="${escapeAttr(imgSrc)}">Buy Print</button>
+              ${buyBtn}
               <button type="button" class="btn-share" data-share-title="${escapeAttr(p.title)}" data-share-url="${escapeAttr(href)}" aria-label="Share ${escapeAttr(p.title)}">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 <span>Share</span>
@@ -711,6 +723,7 @@ if (masonry) {
     if (!showAllGallery) setHero(collectionById(activeCollection));
     masonry.innerHTML = "";
     const items = publishedPosters(allPosters).filter((p) => {
+      if (onShopGallery) return shopEnabled(p);
       if (showAllGallery) return true;
       return (p.collection || "bollywood") === activeCollection;
     });

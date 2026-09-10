@@ -217,6 +217,7 @@ function render() {
             </label>
           </div>
           <div class="row-actions">
+            <button type="button" class="shop-btn">${poster.shop !== false ? "Shop: Yes" : "Shop: No"}</button>
             <button type="button" class="hide-btn">${poster.hidden ? "Show" : "Hide"}</button>
             <button type="button" class="up-btn" ${index === 0 ? "disabled" : ""}>Up</button>
             <button type="button" class="down-btn" ${index === posters.length - 1 ? "disabled" : ""}>Down</button>
@@ -230,6 +231,7 @@ function render() {
     fillCollectionSelect(collectionSelect, poster.collection || "bollywood");
     titleInput.addEventListener("mousedown", (ev) => ev.stopPropagation());
     collectionSelect.addEventListener("mousedown", (ev) => ev.stopPropagation());
+    li.querySelector(".shop-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".hide-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".up-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".down-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
@@ -243,6 +245,11 @@ function render() {
       markDirty();
     });
 
+    li.querySelector(".shop-btn").addEventListener("click", () => {
+      poster.shop = poster.shop === false;
+      markDirty();
+      render();
+    });
     li.querySelector(".hide-btn").addEventListener("click", () => {
       poster.hidden = !poster.hidden;
       markDirty();

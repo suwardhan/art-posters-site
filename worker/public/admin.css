@@ -417,7 +417,8 @@ select {
   gap: 0.35rem;
 }
 
-.hide-btn {
+.hide-btn,
+.shop-btn {
   padding: 0.5rem 1rem;
   background: #fff;
   color: #111;
@@ -429,7 +430,8 @@ select {
   cursor: pointer;
 }
 
-.hide-btn:hover {
+.hide-btn:hover,
+.shop-btn:hover {
   background: #e0e0e0;
 }
 

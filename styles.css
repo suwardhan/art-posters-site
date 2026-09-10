@@ -360,6 +360,17 @@ body:has(.order-dialog[open]) .poster-zoom {
   background: var(--toggle-hover);
 }
 
+body[data-gallery="home"] .poster-zoom .btn-share {
+  background: var(--text);
+  color: var(--bg);
+  border-color: transparent;
+}
+
+body[data-gallery="home"] .poster-zoom .btn-share:hover {
+  background: var(--text);
+  opacity: 0.88;
+}
+
 .poster-zoom .btn-share span {
   position: static;
   width: auto;
@@ -460,6 +471,10 @@ body:has(.order-dialog[open]) .poster-zoom {
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.15s;
+}
+
+.btn-buy[hidden] {
+  display: none;
 }
 
 .btn-buy:hover {
@@ -1240,8 +1255,8 @@ body:has(.order-dialog[open]) .poster-zoom {
   display: grid;
   grid-template-columns: 1fr minmax(240px, 42%);
   gap: 3rem;
-  align-items: center;
-  padding: 5.5rem 0 2rem;
+  align-items: start;
+  padding: 10rem 0 8rem;
 }
 
 .about-copy h1 {
@@ -1251,19 +1266,26 @@ body:has(.order-dialog[open]) .poster-zoom {
   line-height: 1.15;
 }
 
-.about-photo {
-  min-height: 320px;
-  border-radius: 8px;
-  background: var(--dialog-surface);
-  border: 1px dashed var(--input-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.about-copy p {
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 38rem;
 }
 
-.about-photo span {
-  font-size: 0.8rem;
-  color: var(--text-muted);
+.about-photo {
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+}
+
+.about-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center 30%;
 }
 
 .home-press {
@@ -1526,12 +1548,34 @@ main:has(.print-page) {
 
   .about-intro {
     grid-template-columns: 1fr;
-    padding: 4rem 0 1.5rem;
-    gap: 1.75rem;
+    justify-items: center;
+    text-align: center;
+    padding: 6rem 0 5rem;
+    gap: 1.5rem;
+  }
+
+  .about-copy {
+    order: 1;
+  }
+
+  .about-copy p {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .about-photo {
-    min-height: 220px;
+    order: -1;
+    width: 160px;
+    height: 160px;
+    min-height: 0;
+    border-radius: 50%;
+  }
+
+  .about-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
   }
 
   .print-page {

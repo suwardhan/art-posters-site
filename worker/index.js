@@ -116,7 +116,7 @@ async function addPoster(request, env, session) {
   const posters = normalizeCatalog(catalogFile.text);
   const id = uniqueId(slugify(title), posters);
   const imagePath = `images/${id}.${ext}`;
-  const next = posters.concat([{ id, title, image: imagePath, hidden: false, collection }]);
+  const next = posters.concat([{ id, title, image: imagePath, hidden: false, shop: true, collection }]);
   const catalogText = JSON.stringify(next, null, 2) + "\n";
 
   await commitCatalogAndSeo(
@@ -477,6 +477,7 @@ function normalizeCatalog(text) {
       title,
       image,
       hidden: Boolean(p.hidden),
+      shop: p.shop !== false,
       collection: collectionId(p.collection),
     };
   });
@@ -499,6 +500,7 @@ function sanitizeCatalog(incoming, current) {
       title,
       image: existing.image,
       hidden: Boolean(item.hidden),
+      shop: item.shop !== false,
       collection: collectionId(item.collection || existing.collection),
     });
   }

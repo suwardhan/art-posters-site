@@ -4,6 +4,7 @@
     "title": "Pyaasa",
     "image": "images/pyaasa.png",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -11,6 +12,7 @@
     "title": "Jaane Bhi Do Yaaron",
     "image": "images/jaane-bhi-do-yaaron.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -18,6 +20,7 @@
     "title": "Karan arjun",
     "image": "images/karan-arjun.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -25,6 +28,7 @@
     "title": "Baazigar",
     "image": "images/baazigar.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -32,6 +36,7 @@
     "title": "Khoon Bhari Mang",
     "image": "images/khoon-bhari-mang.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -39,6 +44,7 @@
     "title": "Mr India",
     "image": "images/mr-india.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -46,6 +52,7 @@
     "title": "Shaan",
     "image": "images/shaan.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -53,6 +60,7 @@
     "title": "ZNMD",
     "image": "images/znmd.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -60,6 +68,7 @@
     "title": "Baadshah",
     "image": "images/baadshah.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -67,6 +76,7 @@
     "title": "Dangal",
     "image": "images/dangal.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -74,6 +84,7 @@
     "title": "Bathroom",
     "image": "images/bathroom.jpg",
     "hidden": true,
+    "shop": true,
     "collection": "bathroom"
   },
   {
@@ -81,6 +92,7 @@
     "title": "Piku",
     "image": "images/piku.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   },
   {
@@ -88,6 +100,7 @@
     "title": "Chashme Buddoor",
     "image": "images/chashme-buddoor.jpg",
     "hidden": false,
+    "shop": true,
     "collection": "bollywood"
   }
 ]
