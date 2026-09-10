@@ -254,17 +254,12 @@ function collectionById(id) {
   return COLLECTIONS.find((c) => c.id === id) || COLLECTIONS[0];
 }
 
-function collectionFromHash() {
-  const id = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-  return COLLECTIONS.some((c) => c.id === id) ? id : "bollywood";
-}
-
 function collectionFromPath() {
   const fromData = document.body?.dataset?.collection;
   if (fromData && COLLECTIONS.some((c) => c.id === fromData)) return fromData;
   const match = location.pathname.match(/\/collections\/([^/]+)/);
   if (match && COLLECTIONS.some((c) => c.id === match[1])) return match[1];
-  return collectionFromHash();
+  return "bollywood";
 }
 
 function assetUrl(image) {
@@ -278,46 +273,16 @@ function printPath(id) {
   return `/prints/${id}/`;
 }
 
+function postersPath() {
+  return "/posters/";
+}
+
 function collectionPath(id) {
   return `/collections/${id}/`;
 }
 
 function absolutePageUrl(path) {
   return new URL(path, location.origin).href;
-}
-
-function mountCollectionTabs(activeId) {
-  const tabsEl = document.getElementById("collectionTabs");
-  if (!tabsEl) return;
-  tabsEl.innerHTML = "";
-  COLLECTIONS.forEach((collection) => {
-    const tab = document.createElement("a");
-    const on = collection.id === activeId;
-    tab.className = "collection-tab" + (on ? " is-active" : "");
-    tab.href = collectionPath(collection.id);
-    tab.textContent = collection.title;
-    tab.dataset.collection = collection.id;
-    tab.setAttribute("role", "tab");
-    tab.setAttribute("aria-selected", on ? "true" : "false");
-    if (on) tab.setAttribute("aria-current", "page");
-    tabsEl.appendChild(tab);
-  });
-}
-
-function syncCollectionTabs(activeId) {
-  const tabsEl = document.getElementById("collectionTabs");
-  if (!tabsEl) return;
-  if (!tabsEl.children.length) {
-    mountCollectionTabs(activeId);
-    return;
-  }
-  tabsEl.querySelectorAll(".collection-tab").forEach((tab) => {
-    const on = tab.dataset.collection === activeId;
-    tab.classList.toggle("is-active", on);
-    if (tab.hasAttribute("aria-selected")) {
-      tab.setAttribute("aria-selected", on ? "true" : "false");
-    }
-  });
 }
 
 // ── Theme toggle ──
@@ -338,11 +303,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  initNavMenu();
   initOrderDialog();
-  initHomePosterSlideshow();
   initShareButtons();
-  initPrintPage();
 });
+
+function initNavMenu() {
+  const nav = document.querySelector(".navbar");
+  const button = document.getElementById("navToggle");
+  const panel = document.getElementById("siteNav");
+  if (!nav || !button || !panel) return;
+
+  const setOpen = (open) => {
+    nav.classList.toggle("is-nav-open", open);
+    button.setAttribute("aria-expanded", open ? "true" : "false");
+    button.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  };
+
+  button.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setOpen(!nav.classList.contains("is-nav-open"));
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!nav.classList.contains("is-nav-open")) return;
+    if (nav.contains(e.target)) return;
+    setOpen(false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.matchMedia("(min-width: 961px)").matches) setOpen(false);
+  });
+}
 
 const POSTER_BLURB =
   "Limited edition art print. Colour, form, and silence - made to live with you, not just to be looked at.";
@@ -404,9 +400,17 @@ if (masonry) {
   const PLACEHOLDER_RATIOS = ["3 / 4", "2 / 3", "4 / 5", "3 / 5", "5 / 7", "2 / 3", "3 / 4", "4 / 5"];
   let allPosters = [];
   const activeCollection = collectionFromPath();
+  const showAllGallery = document.body?.dataset?.gallery === "all";
+  const galleryReturnPath = onPrintPage
+    ? printPath(document.body.dataset.posterId)
+    : showAllGallery
+      ? location.pathname.startsWith("/posters")
+        ? postersPath()
+        : "/"
+      : collectionPath(activeCollection);
 
   function setHero(collection) {
-    if (!heroTitle || !heroCopy) return;
+    if (showAllGallery || !heroTitle || !heroCopy) return;
     if (collection.id === "bollywood") {
       heroTitle.textContent = "Bollywood, reimagined.";
       heroCopy.textContent = "Limited edition art prints of classic Indian cinema.";
@@ -416,8 +420,7 @@ if (masonry) {
     }
   }
 
-  mountCollectionTabs(activeCollection);
-  setHero(collectionById(activeCollection));
+  if (!showAllGallery) setHero(collectionById(activeCollection));
 
   function detailsOnLeft(card) {
     const grid = masonry.getBoundingClientRect();
@@ -448,7 +451,7 @@ if (masonry) {
     }
     if (onPrintPage) return;
     if (printIdFromPath()) {
-      history.replaceState({}, "", collectionPath(activeCollection));
+      history.replaceState({}, "", galleryReturnPath);
     }
   }
 
@@ -705,14 +708,14 @@ if (masonry) {
 
   function renderCollection() {
     if (expandedCard) collapse({ fromPop: true });
-    const collection = collectionById(activeCollection);
-    setHero(collection);
-    syncCollectionTabs(activeCollection);
+    if (!showAllGallery) setHero(collectionById(activeCollection));
     masonry.innerHTML = "";
-    const items = publishedPosters(allPosters).filter(
-      (p) => (p.collection || "bollywood") === activeCollection
-    );
+    const items = publishedPosters(allPosters).filter((p) => {
+      if (showAllGallery) return true;
+      return (p.collection || "bollywood") === activeCollection;
+    });
     items.forEach(appendPoster);
+    if (showAllGallery) return;
     const placeholders = Math.max(0, PLACEHOLDER_COUNT - items.length);
     for (let i = 0; i < placeholders; i++) appendPlaceholder(i);
   }
@@ -780,11 +783,6 @@ function initShareButtons() {
   );
 }
 
-function initPrintPage() {
-  if (!document.body?.dataset?.posterId) return;
-  mountCollectionTabs(document.body.dataset.collection || "bollywood");
-}
-
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -795,45 +793,6 @@ function escapeHtml(str) {
 
 function escapeAttr(str) {
   return escapeHtml(str).replace(/'/g, "&#39;");
-}
-
-function initHomePosterSlideshow() {
-  const slides = document.querySelectorAll(".home-tile-slide");
-  if (slides.length < 2) return;
-
-  fetch("/posters.json")
-    .then((res) => res.json())
-    .then((data) => {
-      const urls = publishedPosters(catalogPosters(data))
-        .filter((p) => (p.collection || "bollywood") === "bollywood")
-        .map((p) => assetUrl(p.image));
-      if (!urls.length) return;
-
-      slides[0].src = urls[0];
-      let index = 0;
-      let showing = 0;
-
-      const preload = (url) =>
-        new Promise((resolve) => {
-          const img = new Image();
-          img.onload = resolve;
-          img.onerror = resolve;
-          img.src = url;
-        });
-
-      const advance = async () => {
-        index = (index + 1) % urls.length;
-        const next = 1 - showing;
-        await preload(urls[index]);
-        slides[next].src = urls[index];
-        slides[next].classList.add("is-active");
-        slides[showing].classList.remove("is-active");
-        showing = next;
-      };
-
-      setInterval(advance, 5000);
-    })
-    .catch(() => {});
 }
 
 function initOrderDialog() {
