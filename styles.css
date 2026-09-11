@@ -184,8 +184,12 @@ main {
 }
 
 .masonry {
-  columns: 4;
+  columns: 3;
   column-gap: 1rem;
+}
+
+body[data-gallery="home"] .masonry {
+  columns: 4;
 }
 
 .site-nav-link {
@@ -1513,7 +1517,7 @@ main:has(.print-page) {
 
 /* ── Responsive ── */
 @media (max-width: 1200px) {
-  .masonry {
+  body[data-gallery="home"] .masonry {
     columns: 3;
   }
 }
