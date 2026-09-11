@@ -6,7 +6,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Guru Dutt's poet at the edge of the city. A print about longing, neon dusk, and the walk home."
+    "blurb": "Guru Dutt's poet at the edge of the city. A print about longing, neon dusk, and the walk home.",
+    "gallery": [
+      "images/framed/pyaasa-lean.jpg"
+    ]
   },
   {
     "id": "jaane-bhi-do-yaaron",
@@ -15,7 +18,10 @@
     "hidden": false,
     "shop": false,
     "collection": "bollywood",
-    "blurb": "A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends."
+    "blurb": "A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends.",
+    "gallery": [
+      "images/framed/jaane-bhi-do-yaaron-lean.jpg"
+    ]
   },
   {
     "id": "karan-arjun",
@@ -24,7 +30,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Reincarnation, revenge, and two brothers who refuse to stay dead. Drawn like a myth you already know."
+    "blurb": "Reincarnation, revenge, and two brothers who refuse to stay dead. Drawn like a myth you already know.",
+    "gallery": [
+      "images/framed/karan-arjun-lean.jpg"
+    ]
   },
   {
     "id": "baazigar",
@@ -33,7 +42,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "A romance that is also a trap. Charm on the surface, a long game underneath."
+    "blurb": "A romance that is also a trap. Charm on the surface, a long game underneath.",
+    "gallery": [
+      "images/framed/baazigar-lean.jpg"
+    ]
   },
   {
     "id": "khoon-bhari-mang",
@@ -42,7 +54,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "A widow returns, and the revenge is theatrical. Crocodile, sun, and a story that will not stay buried."
+    "blurb": "A widow returns, and the revenge is theatrical. Crocodile, sun, and a story that will not stay buried.",
+    "gallery": [
+      "images/framed/khoon-bhari-mang-lean.jpg"
+    ]
   },
   {
     "id": "mr-india",
@@ -51,7 +66,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Invisibility as a children's adventure and a national daydream. Clock, rainbow, and the man who isn't there."
+    "blurb": "Invisibility as a children's adventure and a national daydream. Clock, rainbow, and the man who isn't there.",
+    "gallery": [
+      "images/framed/mr-india-lean.jpg"
+    ]
   },
   {
     "id": "shaan",
@@ -60,7 +78,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "A caper with a crocodile and a shark on a leash. Spectacle first, then the punchline."
+    "blurb": "A caper with a crocodile and a shark on a leash. Spectacle first, then the punchline.",
+    "gallery": [
+      "images/framed/shaan-lean.jpg"
+    ]
   },
   {
     "id": "znmd",
@@ -69,7 +90,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare."
+    "blurb": "Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare.",
+    "gallery": [
+      "images/framed/znmd-lean.jpg"
+    ]
   },
   {
     "id": "baadshah",
@@ -78,7 +102,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Gadgets, disguises, and a spy who never quite grows up. Green panels like a comic you can hang."
+    "blurb": "Gadgets, disguises, and a spy who never quite grows up. Green panels like a comic you can hang.",
+    "gallery": [
+      "images/framed/baadshah-lean.jpg"
+    ]
   },
   {
     "id": "dangal",
@@ -87,7 +114,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "A father, two daughters, and a clock that will not stop. Wrestling drawn as family legend."
+    "blurb": "A father, two daughters, and a clock that will not stop. Wrestling drawn as family legend.",
+    "gallery": [
+      "images/framed/dangal-lean.jpg"
+    ]
   },
   {
     "id": "bathroom",
@@ -96,7 +126,10 @@
     "hidden": true,
     "shop": true,
     "collection": "bathroom",
-    "blurb": "A private room made public. Tiles, plumbing, and the humour of looking too closely."
+    "blurb": "A private room made public. Tiles, plumbing, and the humour of looking too closely.",
+    "gallery": [
+      "images/framed/bathroom-lean.jpg"
+    ]
   },
   {
     "id": "piku",
@@ -105,7 +138,10 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "A father, a daughter, and the long road between constipation and care. Domestic, funny, exact."
+    "blurb": "A father, a daughter, and the long road between constipation and care. Domestic, funny, exact.",
+    "gallery": [
+      "images/framed/piku-lean.jpg"
+    ]
   },
   {
     "id": "chashme-buddoor",
@@ -114,6 +150,9 @@
     "hidden": false,
     "shop": true,
     "collection": "bollywood",
-    "blurb": "Four friends, one crush, and a Delhi that still feels like a neighbourhood. Light on its feet."
+    "blurb": "Four friends, one crush, and a Delhi that still feels like a neighbourhood. Light on its feet.",
+    "gallery": [
+      "images/framed/chashme-buddoor-lean.jpg"
+    ]
   }
 ]
