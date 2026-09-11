@@ -211,6 +211,7 @@ function render() {
         <div class="card-info">
           <div class="card-fields">
             <input type="text" class="title-input" value="${escapeAttr(poster.title)}" maxlength="120" aria-label="Poster name" />
+            <textarea class="blurb-input" maxlength="400" rows="2" aria-label="SEO blurb" placeholder="Short description for the print page">${escapeAttr(poster.blurb || "")}</textarea>
             <label class="collection-label">
               <span class="visually-hidden">Collection</span>
               <select class="collection-select" aria-label="Collection"></select>
@@ -227,9 +228,11 @@ function render() {
     `;
 
     const titleInput = li.querySelector(".title-input");
+    const blurbInput = li.querySelector(".blurb-input");
     const collectionSelect = li.querySelector(".collection-select");
     fillCollectionSelect(collectionSelect, poster.collection || "bollywood");
     titleInput.addEventListener("mousedown", (ev) => ev.stopPropagation());
+    blurbInput.addEventListener("mousedown", (ev) => ev.stopPropagation());
     collectionSelect.addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".shop-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
     li.querySelector(".hide-btn").addEventListener("mousedown", (ev) => ev.stopPropagation());
@@ -238,6 +241,11 @@ function render() {
     titleInput.addEventListener("change", () => {
       poster.title = titleInput.value.trim() || poster.title;
       titleInput.value = poster.title;
+      markDirty();
+    });
+    blurbInput.addEventListener("change", () => {
+      poster.blurb = blurbInput.value.trim();
+      blurbInput.value = poster.blurb;
       markDirty();
     });
     collectionSelect.addEventListener("change", () => {

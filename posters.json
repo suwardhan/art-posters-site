@@ -5,7 +5,8 @@
     "image": "images/pyaasa.png",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Guru Dutt's poet at the edge of the city. A print about longing, neon dusk, and the walk home."
   },
   {
     "id": "jaane-bhi-do-yaaron",
@@ -13,7 +14,8 @@
     "image": "images/jaane-bhi-do-yaaron.jpg",
     "hidden": false,
     "shop": false,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends."
   },
   {
     "id": "karan-arjun",
@@ -21,7 +23,8 @@
     "image": "images/karan-arjun.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Reincarnation, revenge, and two brothers who refuse to stay dead. Drawn like a myth you already know."
   },
   {
     "id": "baazigar",
@@ -29,7 +32,8 @@
     "image": "images/baazigar.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A romance that is also a trap. Charm on the surface, a long game underneath."
   },
   {
     "id": "khoon-bhari-mang",
@@ -37,7 +41,8 @@
     "image": "images/khoon-bhari-mang.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A widow returns, and the revenge is theatrical. Crocodile, sun, and a story that will not stay buried."
   },
   {
     "id": "mr-india",
@@ -45,7 +50,8 @@
     "image": "images/mr-india.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Invisibility as a children's adventure and a national daydream. Clock, rainbow, and the man who isn't there."
   },
   {
     "id": "shaan",
@@ -53,7 +59,8 @@
     "image": "images/shaan.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A caper with a crocodile and a shark on a leash. Spectacle first, then the punchline."
   },
   {
     "id": "znmd",
@@ -61,7 +68,8 @@
     "image": "images/znmd.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare."
   },
   {
     "id": "baadshah",
@@ -69,7 +77,8 @@
     "image": "images/baadshah.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Gadgets, disguises, and a spy who never quite grows up. Green panels like a comic you can hang."
   },
   {
     "id": "dangal",
@@ -77,7 +86,8 @@
     "image": "images/dangal.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A father, two daughters, and a clock that will not stop. Wrestling drawn as family legend."
   },
   {
     "id": "bathroom",
@@ -85,7 +95,8 @@
     "image": "images/bathroom.jpg",
     "hidden": true,
     "shop": true,
-    "collection": "bathroom"
+    "collection": "bathroom",
+    "blurb": "A private room made public. Tiles, plumbing, and the humour of looking too closely."
   },
   {
     "id": "piku",
@@ -93,7 +104,8 @@
     "image": "images/piku.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "A father, a daughter, and the long road between constipation and care. Domestic, funny, exact."
   },
   {
     "id": "chashme-buddoor",
@@ -101,6 +113,7 @@
     "image": "images/chashme-buddoor.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "blurb": "Four friends, one crush, and a Delhi that still feels like a neighbourhood. Light on its feet."
   }
 ]

@@ -479,6 +479,7 @@ function normalizeCatalog(text) {
       hidden: Boolean(p.hidden),
       shop: p.shop !== false,
       collection: collectionId(p.collection),
+      ...(String(p.blurb || "").trim() ? { blurb: String(p.blurb).trim() } : {}),
     };
   });
 }
@@ -495,6 +496,7 @@ function sanitizeCatalog(incoming, current) {
     if (used.has(existing.id)) continue;
     used.add(existing.id);
     const title = String(item.title || existing.title).trim() || existing.title;
+    const blurb = String(item.blurb ?? existing.blurb ?? "").trim();
     next.push({
       id: existing.id,
       title,
@@ -502,6 +504,7 @@ function sanitizeCatalog(incoming, current) {
       hidden: Boolean(item.hidden),
       shop: item.shop !== false,
       collection: collectionId(item.collection || existing.collection),
+      ...(blurb ? { blurb } : {}),
     });
   }
 
