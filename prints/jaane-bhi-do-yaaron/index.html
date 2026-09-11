@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Jaane Bhi Do Yaaron art print","description":"Jaane Bhi Do Yaaron limited edition art print by Abhishek Chaudhary. A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends.","image":"https://chaudharykidiary.com/images/jaane-bhi-do-yaaron.jpg","url":"https://chaudharykidiary.com/prints/jaane-bhi-do-yaaron/","brand":{"@type":"Brand","name":"ChaudharykiDiary"},"creator":{"@type":"Person","name":"Abhishek Chaudhary","url":"https://chaudharykidiary.com/","sameAs":["https://www.instagram.com/chaudharykidiary/"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Jaane Bhi Do Yaaron art print","description":"Jaane Bhi Do Yaaron limited edition art print by Abhishek Chaudhary. A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends.","image":["https://chaudharykidiary.com/images/jaane-bhi-do-yaaron.jpg"],"url":"https://chaudharykidiary.com/prints/jaane-bhi-do-yaaron/","brand":{"@type":"Brand","name":"ChaudharykiDiary"},"creator":{"@type":"Person","name":"Abhishek Chaudhary","url":"https://chaudharykidiary.com/","sameAs":["https://www.instagram.com/chaudharykidiary/"]}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ChaudharykiDiary","item":"https://chaudharykidiary.com/"},{"@type":"ListItem","position":2,"name":"Bollywood movies","item":"https://chaudharykidiary.com/collections/bollywood/"},{"@type":"ListItem","position":3,"name":"Jaane Bhi Do Yaaron","item":"https://chaudharykidiary.com/prints/jaane-bhi-do-yaaron/"}]}</script>
 </head>
 <body data-collection="bollywood" data-poster-id="jaane-bhi-do-yaaron" data-shop="false">
@@ -55,11 +55,25 @@
 
   <main>
   <div class="print-page">
+    <div class="print-gallery" data-print-gallery>
     <figure class="print-media">
       <img src="/images/jaane-bhi-do-yaaron.jpg" alt="Jaane Bhi Do Yaaron" />
+      <div class="print-media-placeholder" hidden></div>
     </figure>
+    <div class="print-thumbs" role="tablist" aria-label="Jaane Bhi Do Yaaron photos">
+        <button type="button" class="print-thumb is-active" role="tab" aria-selected="true" data-src="/images/jaane-bhi-do-yaaron.jpg" aria-label="Print">
+          <img src="/images/jaane-bhi-do-yaaron.jpg" alt="" />
+        </button>
+        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
+          <span class="placeholder-block"></span>
+        </button>
+        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
+          <span class="placeholder-block"></span>
+        </button>
+      </div>
+  </div>
     <div class="print-copy">
-      <p class="print-kicker"><a href="/collections/bollywood/">Bollywood movies</a></p>
+      <p class="print-kicker"><a href="/posters/">Prints</a></p>
       <h1>Jaane Bhi Do Yaaron</h1>
       <p class="print-blurb">A city comedy that turns into a crime farce. Friends, a corpse, and a joke that never quite ends.</p>
       
@@ -70,7 +84,7 @@
     </div>
   </div>
   <section class="print-related" id="printRelated" aria-labelledby="relatedHeading">
-    <h2 class="home-kicker" id="relatedHeading">More from Bollywood movies</h2>
+    <h2 class="home-kicker" id="relatedHeading">More Prints</h2>
     <div id="relatedMasonry" class="masonry">
       <article class="card" data-id="pyaasa" data-title="Pyaasa" data-image="/images/pyaasa.png" data-shop="true" aria-expanded="false">
   <a class="card-hit" href="/prints/pyaasa/">

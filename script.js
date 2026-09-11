@@ -310,7 +310,49 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavMenu();
   initOrderDialog();
   initShareButtons();
+  initPrintGallery();
 });
+
+function initPrintGallery() {
+  const gallery = document.querySelector("[data-print-gallery]");
+  if (!gallery) return;
+  const media = gallery.querySelector(".print-media");
+  const main = media?.querySelector("img");
+  const placeholder = media?.querySelector(".print-media-placeholder");
+  const thumbs = [...gallery.querySelectorAll(".print-thumb")];
+  if (!main || thumbs.length < 2) return;
+
+  const activate = (thumb) => {
+    const isPlaceholder = thumb.hasAttribute("data-placeholder");
+    if (placeholder) placeholder.hidden = !isPlaceholder;
+    main.hidden = isPlaceholder;
+    if (!isPlaceholder) {
+      const src = thumb.dataset.src;
+      if (src) main.src = src;
+    }
+    thumbs.forEach((btn) => {
+      const on = btn === thumb;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+  };
+
+  gallery.addEventListener("click", (e) => {
+    const thumb = e.target.closest(".print-thumb");
+    if (thumb) activate(thumb);
+  });
+
+  gallery.addEventListener("keydown", (e) => {
+    if (!["ArrowDown", "ArrowRight", "ArrowUp", "ArrowLeft"].includes(e.key)) return;
+    const current = gallery.querySelector(".print-thumb.is-active") || thumbs[0];
+    const i = Math.max(0, thumbs.indexOf(current));
+    const delta = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : -1;
+    const next = thumbs[(i + delta + thumbs.length) % thumbs.length];
+    e.preventDefault();
+    activate(next);
+    next.focus();
+  });
+}
 
 function initNavMenu() {
   const nav = document.querySelector(".navbar");
@@ -701,6 +743,7 @@ if (masonry) {
     if (e.target.closest(".btn-buy, .btn-share")) return;
     const card = e.target.closest(".card:not(.is-placeholder)");
     if (!card || !card.dataset.id) return;
+    if (onShopGallery || onPrintPage) return;
     const fromLink = e.target.closest(".card-hit, .card-title");
     if (fromLink) e.preventDefault();
     expand(card);
@@ -711,7 +754,7 @@ if (masonry) {
     const currentId = document.body.dataset.posterId;
     const section = document.getElementById("printRelated");
     const items = publishedPosters(allPosters).filter(
-      (p) => (p.collection || "bollywood") === activeCollection && p.id !== currentId
+      (p) => shopEnabled(p) && p.id !== currentId
     );
     masonry.innerHTML = "";
     items.forEach(appendPoster);

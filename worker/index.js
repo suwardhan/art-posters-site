@@ -456,6 +456,11 @@ function collectionId(value) {
   return COLLECTIONS.some((c) => c.id === id) ? id : DEFAULT_COLLECTION;
 }
 
+function galleryPaths(value) {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => String(item || "").trim()).filter(Boolean);
+}
+
 function normalizeCatalog(text) {
   let parsed;
   try {
@@ -472,6 +477,7 @@ function normalizeCatalog(text) {
     if (!id) id = `poster-${i + 1}`;
     while (used.has(id)) id = `${id}-2`;
     used.add(id);
+    const gallery = galleryPaths(p.gallery);
     return {
       id,
       title,
@@ -480,6 +486,7 @@ function normalizeCatalog(text) {
       shop: p.shop !== false,
       collection: collectionId(p.collection),
       ...(String(p.blurb || "").trim() ? { blurb: String(p.blurb).trim() } : {}),
+      ...(gallery.length ? { gallery } : {}),
     };
   });
 }
@@ -497,6 +504,7 @@ function sanitizeCatalog(incoming, current) {
     used.add(existing.id);
     const title = String(item.title || existing.title).trim() || existing.title;
     const blurb = String(item.blurb ?? existing.blurb ?? "").trim();
+    const gallery = galleryPaths(existing.gallery);
     next.push({
       id: existing.id,
       title,
@@ -505,6 +513,7 @@ function sanitizeCatalog(incoming, current) {
       shop: item.shop !== false,
       collection: collectionId(item.collection || existing.collection),
       ...(blurb ? { blurb } : {}),
+      ...(gallery.length ? { gallery } : {}),
     });
   }
 
