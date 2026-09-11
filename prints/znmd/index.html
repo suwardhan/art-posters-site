@@ -24,7 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
   <script>document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"ZNMD art print","description":"ZNMD limited edition art print by Abhishek Chaudhary. Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare.","image":"https://chaudharykidiary.com/images/znmd.jpg","url":"https://chaudharykidiary.com/prints/znmd/","brand":{"@type":"Brand","name":"ChaudharykiDiary"},"creator":{"@type":"Person","name":"Abhishek Chaudhary","url":"https://chaudharykidiary.com/","sameAs":["https://www.instagram.com/chaudharykidiary/"]},"offers":{"@type":"AggregateOffer","lowPrice":"25","highPrice":"75","priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://chaudharykidiary.com/prints/znmd/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"ZNMD art print","description":"ZNMD limited edition art print by Abhishek Chaudhary. Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare.","image":["https://chaudharykidiary.com/images/znmd.jpg"],"url":"https://chaudharykidiary.com/prints/znmd/","brand":{"@type":"Brand","name":"ChaudharykiDiary"},"creator":{"@type":"Person","name":"Abhishek Chaudhary","url":"https://chaudharykidiary.com/","sameAs":["https://www.instagram.com/chaudharykidiary/"]},"offers":{"@type":"AggregateOffer","lowPrice":"25","highPrice":"75","priceCurrency":"EUR","availability":"https://schema.org/InStock","url":"https://chaudharykidiary.com/prints/znmd/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ChaudharykiDiary","item":"https://chaudharykidiary.com/"},{"@type":"ListItem","position":2,"name":"Bollywood movies","item":"https://chaudharykidiary.com/collections/bollywood/"},{"@type":"ListItem","position":3,"name":"ZNMD","item":"https://chaudharykidiary.com/prints/znmd/"}]}</script>
 </head>
 <body data-collection="bollywood" data-poster-id="znmd" data-shop="true">
@@ -55,11 +55,25 @@
 
   <main>
   <div class="print-page">
+    <div class="print-gallery" data-print-gallery>
     <figure class="print-media">
       <img src="/images/znmd.jpg" alt="ZNMD" />
+      <div class="print-media-placeholder" hidden></div>
     </figure>
+    <div class="print-thumbs" role="tablist" aria-label="ZNMD photos">
+        <button type="button" class="print-thumb is-active" role="tab" aria-selected="true" data-src="/images/znmd.jpg" aria-label="Print">
+          <img src="/images/znmd.jpg" alt="" />
+        </button>
+        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
+          <span class="placeholder-block"></span>
+        </button>
+        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
+          <span class="placeholder-block"></span>
+        </button>
+      </div>
+  </div>
     <div class="print-copy">
-      <p class="print-kicker"><a href="/collections/bollywood/">Bollywood movies</a></p>
+      <p class="print-kicker"><a href="/posters/">Prints</a></p>
       <h1>ZNMD</h1>
       <p class="print-blurb">Three friends, a goat, a plane, and the joke of starting over. A holiday that is also a midlife dare.</p>
       <p class="print-price">From €25</p>
@@ -70,7 +84,7 @@
     </div>
   </div>
   <section class="print-related" id="printRelated" aria-labelledby="relatedHeading">
-    <h2 class="home-kicker" id="relatedHeading">More from Bollywood movies</h2>
+    <h2 class="home-kicker" id="relatedHeading">More Prints</h2>
     <div id="relatedMasonry" class="masonry">
       <article class="card" data-id="pyaasa" data-title="Pyaasa" data-image="/images/pyaasa.png" data-shop="true" aria-expanded="false">
   <a class="card-hit" href="/prints/pyaasa/">
@@ -82,20 +96,6 @@
       <div class="card-actions">
         <button type="button" class="btn-buy" data-title="Pyaasa" data-image="/images/pyaasa.png">Buy Print</button>
         <button type="button" class="btn-share" data-share-title="Pyaasa" data-share-url="/prints/pyaasa/" aria-label="Share Pyaasa"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
-      </div>
-    </div>
-  </div>
-</article>
-      <article class="card" data-id="jaane-bhi-do-yaaron" data-title="Jaane Bhi Do Yaaron" data-image="/images/jaane-bhi-do-yaaron.jpg" data-shop="false" aria-expanded="false">
-  <a class="card-hit" href="/prints/jaane-bhi-do-yaaron/">
-    <img src="/images/jaane-bhi-do-yaaron.jpg" alt="Jaane Bhi Do Yaaron" loading="lazy" />
-  </a>
-  <div class="card-overlay">
-    <div class="card-info">
-      <a class="card-title" href="/prints/jaane-bhi-do-yaaron/">Jaane Bhi Do Yaaron</a>
-      <div class="card-actions">
-        
-        <button type="button" class="btn-share" data-share-title="Jaane Bhi Do Yaaron" data-share-url="/prints/jaane-bhi-do-yaaron/" aria-label="Share Jaane Bhi Do Yaaron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
       </div>
     </div>
   </div>

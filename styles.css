@@ -23,6 +23,7 @@
   --error: #b42318;
   --alert-bg: #fff4c4;
   --alert-text: #6b5200;
+  --print-media-border: #e2e2e2;
 }
 
 [data-theme="dark"] {
@@ -41,6 +42,7 @@
   --error: #f97066;
   --alert-bg: #3d3410;
   --alert-text: #f5e6a3;
+  --print-media-border: #3a3a3a;
 }
 
 body {
@@ -1433,14 +1435,94 @@ main:has(.print-page) {
   max-width: 40rem;
 }
 
+.print-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.print-thumbs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.print-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 4.25rem;
+  height: 4.25rem;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--toggle-bg);
+  flex-shrink: 0;
+}
+
+.print-thumb.is-active {
+  border-color: var(--text);
+}
+
+.print-thumb:hover {
+  border-color: var(--text-muted);
+}
+
+.print-thumb.is-active:hover {
+  border-color: var(--text);
+}
+
+.print-thumb:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.print-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.print-thumb--placeholder {
+  cursor: pointer;
+}
+
+.print-thumb--placeholder .placeholder-block {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.print-media-placeholder {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: var(--dialog-surface);
+}
+
 .print-media {
-  margin: 0;
+  position: relative;
+  margin: 0 auto;
+  width: min(100%, calc(min(78vh, 52rem) * 3 / 4));
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--print-media-border);
+  border-radius: 8px;
 }
 
 .print-media img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
   border-radius: 8px;
 }
 
@@ -1609,6 +1691,12 @@ main:has(.print-page) {
   .print-page {
     grid-template-columns: 1fr;
     padding: 1.5rem 1rem 3rem;
+  }
+
+  .print-thumb {
+    flex: 0 0 3.75rem;
+    width: 3.75rem;
+    height: 3.75rem;
   }
 
   .press-cards {
