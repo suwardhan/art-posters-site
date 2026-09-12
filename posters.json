@@ -154,5 +154,13 @@
     "gallery": [
       "images/framed/chashme-buddoor-lean.jpg"
     ]
+  },
+  {
+    "id": "test-frame",
+    "title": "Test frame",
+    "image": "images/test-frame.jpg",
+    "hidden": false,
+    "shop": true,
+    "collection": "bollywood"
   }
 ]
