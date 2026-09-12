@@ -67,16 +67,25 @@
         <button type="button" class="print-thumb" role="tab" aria-selected="false" data-src="/images/framed/shaan-lean.jpg" aria-label="Framed print">
           <img src="/images/framed/shaan-lean.jpg" alt="" />
         </button>
-        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
-          <span class="placeholder-block"></span>
-        </button>
       </div>
   </div>
     <div class="print-copy">
       <p class="print-kicker"><a href="/posters/">Prints</a></p>
       <h1>Shaan</h1>
       <p class="print-blurb">A caper with a crocodile and a shark on a leash. Spectacle first, then the punchline.</p>
-      <p class="print-price">From €25</p>
+      <div class="print-options" data-print-options>
+        <p class="print-price" id="printPrice">€40</p>
+        <div class="print-option">
+          <label class="order-size-heading" for="printSize">Size</label>
+          <div class="select-wrap">
+            <select id="printSize"></select>
+          </div>
+        </div>
+        <div class="print-option">
+          <label class="order-size-heading" for="printQty">Quantity</label>
+          <input type="number" id="printQty" min="1" max="20" value="1" />
+        </div>
+      </div>
       <div class="print-actions">
         <button type="button" class="btn-buy" data-title="Shaan" data-image="/images/shaan.jpg">Buy Print</button>
         <button type="button" class="btn-share" data-share-title="Shaan" data-share-url="/prints/shaan/"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>
@@ -245,8 +254,11 @@
         <div class="order-sidebar">
         <aside class="order-preview">
           <img id="orderPosterImg" src="" alt="" />
+          <div class="order-preview-copy">
           <h2 id="orderDialogTitle" class="order-poster-title"></h2>
+          <p class="order-print-meta" id="orderPrintMeta" hidden></p>
           <p class="order-unit-price" id="orderUnitPrice">€40 per print</p>
+          </div>
         </aside>
 
         <section class="order-faq" id="orderFaq" aria-label="Order FAQ">
@@ -274,6 +286,13 @@
             </p>
           </details>
           <details class="order-faq-item">
+            <summary>Can I return a print?</summary>
+            <p>
+              We print, pack, and ship everything ourselves, so we don't offer returns.
+              Please double-check the size and title before you order.
+            </p>
+          </details>
+          <details class="order-faq-item">
             <summary>Need help?</summary>
             <p>
               Reply to your confirmation email, or write to
@@ -287,8 +306,9 @@
         <form id="orderForm" class="order-form" novalidate>
           <input type="hidden" id="orderPosterTitle" name="poster" />
 
-          <fieldset class="order-fieldset">
+          <fieldset class="order-fieldset" id="orderPrintFieldset">
             <legend>Print</legend>
+            <div id="orderPrintPicker">
             <div class="order-row">
               <span class="order-size-heading" id="orderSizeLabel">Size</span>
               <div
@@ -302,6 +322,7 @@
             <div class="order-row">
               <label for="orderQty">Quantity</label>
               <input type="number" id="orderQty" name="quantity" min="1" max="20" value="1" required />
+            </div>
             </div>
           </fieldset>
 
@@ -339,9 +360,11 @@
             </div>
             <div class="order-row">
               <label for="orderCountry">Country</label>
+              <div class="select-wrap">
               <select id="orderCountry" name="country" autocomplete="country-name" required>
                 <option value="">Select country</option>
               </select>
+              </div>
             </div>
           </fieldset>
 
