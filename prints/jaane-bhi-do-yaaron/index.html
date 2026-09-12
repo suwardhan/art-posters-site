@@ -67,9 +67,6 @@
         <button type="button" class="print-thumb" role="tab" aria-selected="false" data-src="/images/framed/jaane-bhi-do-yaaron-lean.jpg" aria-label="Framed print">
           <img src="/images/framed/jaane-bhi-do-yaaron-lean.jpg" alt="" />
         </button>
-        <button type="button" class="print-thumb print-thumb--placeholder" role="tab" aria-selected="false" data-placeholder="true" aria-label="Framed photo coming soon">
-          <span class="placeholder-block"></span>
-        </button>
       </div>
   </div>
     <div class="print-copy">
@@ -259,8 +256,11 @@
         <div class="order-sidebar">
         <aside class="order-preview">
           <img id="orderPosterImg" src="" alt="" />
+          <div class="order-preview-copy">
           <h2 id="orderDialogTitle" class="order-poster-title"></h2>
+          <p class="order-print-meta" id="orderPrintMeta" hidden></p>
           <p class="order-unit-price" id="orderUnitPrice">€40 per print</p>
+          </div>
         </aside>
 
         <section class="order-faq" id="orderFaq" aria-label="Order FAQ">
@@ -288,6 +288,13 @@
             </p>
           </details>
           <details class="order-faq-item">
+            <summary>Can I return a print?</summary>
+            <p>
+              We print, pack, and ship everything ourselves, so we don't offer returns.
+              Please double-check the size and title before you order.
+            </p>
+          </details>
+          <details class="order-faq-item">
             <summary>Need help?</summary>
             <p>
               Reply to your confirmation email, or write to
@@ -301,8 +308,9 @@
         <form id="orderForm" class="order-form" novalidate>
           <input type="hidden" id="orderPosterTitle" name="poster" />
 
-          <fieldset class="order-fieldset">
+          <fieldset class="order-fieldset" id="orderPrintFieldset">
             <legend>Print</legend>
+            <div id="orderPrintPicker">
             <div class="order-row">
               <span class="order-size-heading" id="orderSizeLabel">Size</span>
               <div
@@ -316,6 +324,7 @@
             <div class="order-row">
               <label for="orderQty">Quantity</label>
               <input type="number" id="orderQty" name="quantity" min="1" max="20" value="1" required />
+            </div>
             </div>
           </fieldset>
 
@@ -353,9 +362,11 @@
             </div>
             <div class="order-row">
               <label for="orderCountry">Country</label>
+              <div class="select-wrap">
               <select id="orderCountry" name="country" autocomplete="country-name" required>
                 <option value="">Select country</option>
               </select>
+              </div>
             </div>
           </fieldset>
 

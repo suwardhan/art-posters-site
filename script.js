@@ -85,6 +85,10 @@ function setConfirmLayout(on) {
   if (faq) faq.hidden = on;
   if (confirmView) confirmView.hidden = !on;
   if (closeBtn) closeBtn.hidden = on;
+  if (on) {
+    const meta = document.getElementById("orderPrintMeta");
+    if (meta) meta.hidden = true;
+  }
 }
 
 function clearPayOptions() {
@@ -233,6 +237,46 @@ function priceForSize(sizeId) {
   return match ? match.price : 0;
 }
 
+function posterSize(sizeId) {
+  return POSTER_SIZES.find((s) => s.id === sizeId) || null;
+}
+
+function clampQty(value) {
+  return Math.max(1, Math.min(20, parseInt(value, 10) || 1));
+}
+
+function appendSizeChips(chipsEl, onSelect) {
+  if (!chipsEl) return;
+  POSTER_SIZES.forEach((s) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "size-chip";
+    chip.dataset.size = s.id;
+    chip.setAttribute("role", "radio");
+    chip.setAttribute("aria-checked", "false");
+    chip.innerHTML = `
+      <span class="size-chip-size">${escapeHtml(s.label)}</span>
+      <span class="size-chip-price">€${s.price}</span>
+    `;
+    chip.addEventListener("click", () => onSelect(s.id));
+    chipsEl.appendChild(chip);
+  });
+}
+
+function syncSizeChips(chipsEl, sizeId) {
+  if (!chipsEl) return;
+  chipsEl.querySelectorAll(".size-chip").forEach((chip) => {
+    const on = chip.dataset.size === sizeId;
+    chip.classList.toggle("is-selected", on);
+    chip.setAttribute("aria-checked", on ? "true" : "false");
+  });
+}
+
+const orderDialogCtl = {
+  applySelection() {},
+  setLocked() {},
+};
+
 function publishedPosters(posters) {
   return (posters || []).filter((p) => p && p.hidden !== true);
 }
@@ -311,7 +355,33 @@ document.addEventListener("DOMContentLoaded", () => {
   initOrderDialog();
   initShareButtons();
   initPrintGallery();
+  initPrintOptions();
 });
+
+function initPrintOptions() {
+  const sizeSelect = document.getElementById("printSize");
+  const qtyInput = document.getElementById("printQty");
+  const priceEl = document.getElementById("printPrice");
+  if (!sizeSelect || !qtyInput) return;
+
+  POSTER_SIZES.forEach((s) => {
+    const option = document.createElement("option");
+    option.value = s.id;
+    option.textContent = `${s.label} (€${s.price})`;
+    sizeSelect.appendChild(option);
+  });
+
+  const updatePrice = () => {
+    if (priceEl) priceEl.textContent = `€${priceForSize(sizeSelect.value)}`;
+  };
+
+  sizeSelect.value = DEFAULT_SIZE;
+  updatePrice();
+  sizeSelect.addEventListener("change", updatePrice);
+  qtyInput.addEventListener("change", () => {
+    qtyInput.value = String(clampQty(qtyInput.value));
+  });
+}
 
 function initPrintGallery() {
   const gallery = document.querySelector("[data-print-gallery]");
@@ -830,9 +900,15 @@ function initShareButtons() {
       if (!buy) return;
       e.preventDefault();
       e.stopPropagation();
+      const fromPrintPage = Boolean(buy.closest(".print-copy") && document.getElementById("printSize"));
+      const printSize = document.getElementById("printSize")?.value;
+      const printQty = document.getElementById("printQty")?.value;
       openOrderDialog({
         title: buy.dataset.title,
         image: buy.dataset.image,
+        size: fromPrintPage ? printSize : undefined,
+        quantity: fromPrintPage ? printQty : undefined,
+        locked: fromPrintPage,
       });
     },
     true
@@ -867,8 +943,11 @@ function initOrderDialog() {
   const confirmView = document.getElementById("orderConfirmView");
   const confirmCode = document.getElementById("orderConfirmCode");
 
+  const printFieldset = document.getElementById("orderPrintFieldset");
+  const printMeta = document.getElementById("orderPrintMeta");
+
   const updateTotal = () => {
-    const qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
+    const qty = clampQty(qtyInput.value);
     const unit = priceForSize(sizeInput.value);
     unitPriceEl.textContent = `€${unit} per print`;
     totalEl.textContent = `€${qty * unit}`;
@@ -876,30 +955,32 @@ function initOrderDialog() {
 
   const selectSize = (sizeId) => {
     sizeInput.value = sizeId;
-    chipsEl.querySelectorAll(".size-chip").forEach((chip) => {
-      const on = chip.dataset.size === sizeId;
-      chip.classList.toggle("is-selected", on);
-      chip.setAttribute("aria-checked", on ? "true" : "false");
-    });
+    syncSizeChips(chipsEl, sizeId);
     updateTotal();
   };
 
-  POSTER_SIZES.forEach((s) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "size-chip";
-    chip.dataset.size = s.id;
-    chip.setAttribute("role", "radio");
-    chip.setAttribute("aria-checked", "false");
-    chip.innerHTML = `
-      <span class="size-chip-size">${escapeHtml(s.label)}</span>
-      <span class="size-chip-price">€${s.price}</span>
-    `;
-    chip.addEventListener("click", () => selectSize(s.id));
-    chipsEl.appendChild(chip);
-  });
+  const applySelection = (sizeId, quantity) => {
+    const size = posterSize(sizeId) ? sizeId : DEFAULT_SIZE;
+    qtyInput.value = String(clampQty(quantity));
+    selectSize(size);
+  };
 
-  selectSize(DEFAULT_SIZE);
+  const setLocked = (locked) => {
+    if (printFieldset) printFieldset.hidden = Boolean(locked);
+    if (printMeta) printMeta.hidden = !locked;
+    if (locked && printMeta) {
+      const size = posterSize(sizeInput.value);
+      const label = size ? size.label : sizeInput.value;
+      const qty = clampQty(qtyInput.value);
+      printMeta.textContent = `Size: ${label} | Quantity: ${qty}`;
+    }
+  };
+
+  orderDialogCtl.applySelection = applySelection;
+  orderDialogCtl.setLocked = setLocked;
+
+  appendSizeChips(chipsEl, selectSize);
+  applySelection(DEFAULT_SIZE, 1);
   qtyInput.addEventListener("input", updateTotal);
 
   const countrySelect = document.getElementById("orderCountry");
@@ -927,8 +1008,8 @@ function initOrderDialog() {
     const zoomOpen = document.querySelector(".poster-zoom:not([hidden])");
     if (!zoomOpen) document.body.style.overflow = "";
     form.reset();
-    qtyInput.value = "1";
-    selectSize(DEFAULT_SIZE);
+    applySelection(DEFAULT_SIZE, 1);
+    setLocked(false);
     errorEl.hidden = true;
     errorEl.textContent = "";
     submitBtn.disabled = false;
@@ -1043,7 +1124,7 @@ function openOrderOverlay(dialog) {
   document.body.style.overflow = "hidden";
 }
 
-function openOrderDialog({ title, image }) {
+function openOrderDialog({ title, image, size, quantity, locked }) {
   const dialog = document.getElementById("orderDialog");
   if (!dialog) return;
 
@@ -1051,16 +1132,8 @@ function openOrderDialog({ title, image }) {
   document.getElementById("orderPosterImg").alt = title;
   document.getElementById("orderDialogTitle").textContent = title;
   document.getElementById("orderPosterTitle").value = title;
-  document.querySelectorAll("#orderSizeChips .size-chip").forEach((chip) => {
-    const on = chip.dataset.size === DEFAULT_SIZE;
-    chip.classList.toggle("is-selected", on);
-    chip.setAttribute("aria-checked", on ? "true" : "false");
-  });
-  const sizeInput = document.getElementById("orderSize");
-  if (sizeInput) sizeInput.value = DEFAULT_SIZE;
-  const unit = priceForSize(DEFAULT_SIZE);
-  document.getElementById("orderUnitPrice").textContent = `€${unit} per print`;
-  document.getElementById("orderTotal").textContent = `€${unit}`;
+  orderDialogCtl.applySelection(size || DEFAULT_SIZE, quantity ?? 1);
+  orderDialogCtl.setLocked(Boolean(locked));
 
   document.getElementById("orderFormView").hidden = false;
   document.getElementById("orderConfirmView").hidden = true;
