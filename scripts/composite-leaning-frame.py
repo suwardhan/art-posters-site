@@ -8,6 +8,7 @@ matches each print's aspect ratio, then composites without cropping.
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections import deque
 from pathlib import Path
@@ -274,39 +275,92 @@ def with_lean_gallery(poster: dict) -> dict:
     return {**poster, "gallery": [path, *extras]}
 
 
-def main():
-    mockup = Image.open(MOCKUP_PATH).convert("RGB")
-    base_mask = paper_mask(mockup)
-    base_corners = paper_corners(base_mask)
-    avg_w, avg_h = opening_size(base_corners)
-    print(MOCKUP_PATH.name, mockup.size, "opening", round(avg_w / avg_h, 3), base_corners.tolist())
+def gallery_has_lean(poster: dict) -> bool:
+    path = lean_path(poster["id"])
+    gallery = [item for item in poster.get("gallery") or [] if item]
+    return bool(gallery) and gallery[0] == path
 
+
+def composite_poster(
+    poster: dict,
+    mockup: Image.Image,
+    base_corners: np.ndarray,
+    avg_w: float,
+    avg_h: float,
+    cache: dict[float, tuple[Image.Image, Image.Image, np.ndarray]],
+) -> None:
+    art = Image.open(ROOT / poster["image"])
+    art_ratio = art.width / max(art.height, 1)
+    target_h = avg_w / max(art_ratio, 0.05)
+    height_scale = float(np.clip(target_h / avg_h, HEIGHT_SCALE_MIN, HEIGHT_SCALE_MAX))
+    key = round(height_scale, 3)
+    if key not in cache:
+        sized, seed = scale_frame_height(mockup, base_corners, art_ratio)
+        mask = paper_mask(sized, seed)
+        corners = paper_corners(mask)
+        cache[key] = (sized, mask, corners)
+        ow, oh = opening_size(corners)
+        print(f"  frame scale {key:.3f} opening {ow / oh:.3f} size {sized.size}")
+    sized, mask, corners = cache[key]
+    framed = composite(art, sized, mask, corners)
+    dest = ROOT / lean_path(poster["id"])
+    save_jpeg(framed, dest)
+    print("wrote", dest.relative_to(ROOT), "art", round(art_ratio, 3))
+
+
+def main(missing_only: bool = False):
     posters = json.loads(CATALOG_PATH.read_text())
-    cache: dict[float, tuple[Image.Image, Image.Image, np.ndarray]] = {}
+    to_build = []
+    for poster in posters:
+        dest = ROOT / lean_path(poster["id"])
+        if missing_only and dest.exists():
+            continue
+        image_path = ROOT / poster["image"]
+        if not image_path.exists():
+            print("skip missing art", poster["id"])
+            continue
+        to_build.append(poster)
+
+    if to_build:
+        mockup = Image.open(MOCKUP_PATH).convert("RGB")
+        base_mask = paper_mask(mockup)
+        base_corners = paper_corners(base_mask)
+        avg_w, avg_h = opening_size(base_corners)
+        print(
+            MOCKUP_PATH.name,
+            mockup.size,
+            "opening",
+            round(avg_w / avg_h, 3),
+            base_corners.tolist(),
+        )
+        cache: dict[float, tuple[Image.Image, Image.Image, np.ndarray]] = {}
+        for poster in to_build:
+            composite_poster(poster, mockup, base_corners, avg_w, avg_h, cache)
+    elif missing_only:
+        print("no missing framed mockups")
+
     updated = []
     for poster in posters:
-        art = Image.open(ROOT / poster["image"])
-        art_ratio = art.width / max(art.height, 1)
-        target_h = avg_w / max(art_ratio, 0.05)
-        height_scale = float(np.clip(target_h / avg_h, HEIGHT_SCALE_MIN, HEIGHT_SCALE_MAX))
-        key = round(height_scale, 3)
-        if key not in cache:
-            sized, seed = scale_frame_height(mockup, base_corners, art_ratio)
-            mask = paper_mask(sized, seed)
-            corners = paper_corners(mask)
-            cache[key] = (sized, mask, corners)
-            ow, oh = opening_size(corners)
-            print(f"  frame scale {key:.3f} opening {ow / oh:.3f} size {sized.size}")
-        sized, mask, corners = cache[key]
-        framed = composite(art, sized, mask, corners)
         dest = ROOT / lean_path(poster["id"])
-        save_jpeg(framed, dest)
-        updated.append(with_lean_gallery(poster))
-        print("wrote", dest.relative_to(ROOT), "art", round(art_ratio, 3))
+        if dest.exists() and not gallery_has_lean(poster):
+            updated.append(with_lean_gallery(poster))
+        else:
+            updated.append(poster)
 
-    CATALOG_PATH.write_text(json.dumps(updated, indent=2) + "\n")
-    print("updated posters.json")
+    catalog_text = json.dumps(updated, indent=2) + "\n"
+    if catalog_text != CATALOG_PATH.read_text():
+        CATALOG_PATH.write_text(catalog_text)
+        print("updated posters.json")
+    else:
+        print("posters.json unchanged")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--missing-only",
+        action="store_true",
+        help="Create framed mockups only when the JPEG does not exist yet",
+    )
+    args = parser.parse_args()
+    main(missing_only=args.missing_only)

@@ -1,0 +1,55 @@
+name: Framed mockups
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - posters.json
+      - images/*
+      - scripts/composite-leaning-frame.py
+      - .github/workflows/framed-mockup.yml
+
+concurrency:
+  group: framed-mockup
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  composite:
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install compositor deps
+        run: pip install pillow numpy
+
+      - name: Create missing framed mockups
+        run: python scripts/composite-leaning-frame.py --missing-only
+
+      - name: Rebuild print pages
+        run: |
+          if git diff --quiet -- posters.json images/framed; then
+            echo "No framed mockup updates"
+            exit 0
+          fi
+          node scripts/generate-seo.mjs
+
+      - name: Commit framed mockups
+        run: |
+          git add images/framed posters.json prints collections posters index.html about 404.html sitemap.xml robots.txt
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Add framed mockups for new prints. [skip ci]"
+          git push

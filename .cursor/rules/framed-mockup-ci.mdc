@@ -1,21 +1,18 @@
 ---
-description: Next up — generate leaning-frame mockups automatically after admin upload
+description: Auto-generate leaning-frame mockups after admin upload via GitHub Actions
 globs: worker/**/*,scripts/composite-leaning-frame.py,.github/**
 alwaysApply: false
 ---
 
 # Framed mockups after admin save
 
-Admin upload does **not** create `images/framed/{id}-lean.jpg`. New posters go live with “framed photo coming soon” placeholders until the compositor runs.
+New posters are composited by `.github/workflows/framed-mockup.yml`, not by the Cloudflare Worker.
 
-**Agreed next step:** a GitHub Action (a short extra deploy delay is fine). Do not port the Pillow compositor into the Cloudflare Worker.
+- Triggers on `main` when `posters.json` or `images/*` changes (admin add).
+- Runs `python scripts/composite-leaning-frame.py --missing-only` (skip existing JPEGs; do not rerun on reorder/rename).
+- Updates that poster’s `gallery`, regenerates SEO pages, commits with `[skip ci]`.
+- Do not port the Pillow compositor into the Worker.
+- Admin has no replace-image flow; `--missing-only` will not refresh a framed JPEG if the artwork file is replaced in place.
 
-When implementing:
-
-- Trigger after an admin add (artwork + `posters.json` on `main`).
-- Run `scripts/composite-leaning-frame.py` for **missing** framed files only — not on every reorder/rename.
-- Commit the JPEG, set that poster’s `gallery` to the lean path, regenerate SEO pages.
-- Use `[skip ci]` (or equivalent) so the action commit does not loop.
-- Admin has no replace-image flow; only new uploads need this.
-
-Local rebuild: `.venv/bin/python3 scripts/composite-leaning-frame.py`
+Local full rebuild: `.venv/bin/python3 scripts/composite-leaning-frame.py`  
+Manual Action run: **Actions** → **Framed mockups** → **Run workflow**.
