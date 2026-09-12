@@ -159,7 +159,7 @@
     "id": "test-frame",
     "title": "Test frame",
     "image": "images/test-frame.jpg",
-    "hidden": false,
+    "hidden": true,
     "shop": true,
     "collection": "bollywood",
     "gallery": [
