@@ -161,6 +161,9 @@
     "image": "images/test-frame.jpg",
     "hidden": false,
     "shop": true,
-    "collection": "bollywood"
+    "collection": "bollywood",
+    "gallery": [
+      "images/framed/test-frame-lean.jpg"
+    ]
   }
 ]
